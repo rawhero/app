@@ -12,7 +12,16 @@ import UserNotifications
     func applicationWillFinishLaunching(_: Notification) {
 //        mainMenu = Menu()
         
-        Launch().makeKeyAndOrderFront(nil)
+        if let bookmark = Defaults.current {
+            if let access = bookmark.url {
+                Window(bookmark: bookmark, url: access).makeKeyAndOrderFront(nil)
+            } else {
+                Defaults.current = nil
+                showLaunch()
+            }
+        } else {
+            showLaunch()
+        }
     }
     
     func applicationDidFinishLaunching(_: Notification) {

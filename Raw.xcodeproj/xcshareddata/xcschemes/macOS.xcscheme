@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CEA8927927527A9F00D0603B"
-               BuildableName = "macOS.app"
+               BuildableName = "Raw.app"
                BlueprintName = "macOS"
                ReferencedContainer = "container:Raw.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CEA8927927527A9F00D0603B"
-            BuildableName = "macOS.app"
+            BuildableName = "Raw.app"
             BlueprintName = "macOS"
             ReferencedContainer = "container:Raw.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CEA8927927527A9F00D0603B"
-            BuildableName = "macOS.app"
+            BuildableName = "Raw.app"
             BlueprintName = "macOS"
             ReferencedContainer = "container:Raw.xcodeproj">
          </BuildableReference>
