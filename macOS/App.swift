@@ -7,27 +7,14 @@ import Core
     required init?(coder: NSCoder) { nil }
     override init() {
         super.init()
+        cloud.load()
         delegate = self
     }
     
     func applicationWillFinishLaunching(_: Notification) {
 //        mainMenu = Menu()
         
-        Task {
-            do {
-                let current = try await cloud.current
-                
-                await MainActor
-                    .run {
-                        Window(bookmark: current.bookmark, url: current.url).makeKeyAndOrderFront(nil)
-                    }
-            } catch {
-                await MainActor
-                    .run {
-                        showLaunch()
-                    }
-            }
-        }
+        
     }
     
     func applicationDidFinishLaunching(_: Notification) {
@@ -47,6 +34,16 @@ import Core
 //        Task {
 //            _ = await UNUserNotificationCenter.request()
 //        }
+        
+        Task
+            .detached(priority: .utility) {
+                do {
+                    let current = try await cloud.current
+                    await Window(bookmark: current.bookmark, url: current.url).makeKeyAndOrderFront(nil)
+                } catch {
+                    await NSApp.showLaunch()
+                }
+            }
     }
     
     func applicationDidBecomeActive(_: Notification) {

@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/rawhero/core.git",
         "state": {
           "branch": "main",
-          "revision": "4782dfc4103625dcdfc538b6dc4ff003965bd433",
+          "revision": "d953e67641ee8d280ce5eb7c278ebd0832e54fad",
           "version": null
         }
       },
@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/archivable/package.git",
         "state": {
           "branch": "main",
-          "revision": "a17c533c62cefe5ecae46e165a934d2734d4f3f0",
+          "revision": "a4300df34978f7072aeb75009d15f13181142284",
           "version": null
         }
       }

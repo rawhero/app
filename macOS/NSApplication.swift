@@ -1,7 +1,7 @@
 import AppKit
 
 extension NSApplication {
-    @objc func showLaunch() {
+    @MainActor @objc func showLaunch() {
         (NSApp.anyWindow() ?? Launch())
             .makeKeyAndOrderFront(nil)
     }
