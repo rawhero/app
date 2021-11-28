@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import Core
 
 final class Window: NSWindow, NSWindowDelegate {
     private var subs = Set<AnyCancellable>()
@@ -63,8 +64,9 @@ final class Window: NSWindow, NSWindowDelegate {
     }
     
     override func close() {
-        url.stopAccessingSecurityScopedResource()
-        Defaults.clear(bookmark: bookmark)
+        Task {
+            await cloud.close(bookmark: bookmark, url: url)
+        }
         
         if NSApp
             .windows

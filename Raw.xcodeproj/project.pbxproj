@@ -7,9 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE82EA122753B0C8007E24F3 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = CE82EA112753B0C8007E24F3 /* Core */; };
+		CE82EA142753B122007E24F3 /* Global.swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE82EA132753B122007E24F3 /* Global.swift.swift */; };
+		CE82EA172753B30A007E24F3 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE82EA162753B30A007E24F3 /* CloudKit.framework */; };
 		CEA8927E27527A9F00D0603B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA8927D27527A9F00D0603B /* App.swift */; };
 		CEA8928227527AA000D0603B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8928127527AA000D0603B /* Assets.xcassets */; };
 		CEA8928C27527DE400D0603B /* Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA8928B27527DE400D0603B /* Launch.swift */; };
+		CECFC37C2753E8B900CE985C /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CECFC37B2753E8B900CE985C /* StoreKit.framework */; };
 		CEF59EC32752857400B40DFB /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59EB82752857400B40DFB /* Action.swift */; };
 		CEF59EC42752857400B40DFB /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59EB92752857400B40DFB /* Image.swift */; };
 		CEF59EC52752857400B40DFB /* Flip.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59EBA2752857400B40DFB /* Flip.swift */; };
@@ -24,19 +28,20 @@
 		CEF59ECF2752891300B40DFB /* Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59ECE2752891300B40DFB /* Gradient.swift */; };
 		CEF59ED127528E3100B40DFB /* Window.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59ED027528E3100B40DFB /* Window.swift */; };
 		CEF59ED32752948200B40DFB /* Bar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59ED22752948200B40DFB /* Bar.swift */; };
-		CEF59ED7275297A000B40DFB /* Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59ED6275297A000B40DFB /* Bookmark.swift */; };
-		CEF59ED927529A1800B40DFB /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59ED827529A1800B40DFB /* Defaults.swift */; };
 		CEF59EDB27529B5500B40DFB /* Invalid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59EDA27529B5500B40DFB /* Invalid.swift */; };
 		CEF59EDD2752A0E900B40DFB /* NSApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59EDC2752A0E900B40DFB /* NSApplication.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CE82EA132753B122007E24F3 /* Global.swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift.swift; sourceTree = "<group>"; };
+		CE82EA162753B30A007E24F3 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		CEA8927A27527A9F00D0603B /* Raw.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Raw.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEA8927D27527A9F00D0603B /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		CEA8928127527AA000D0603B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CEA8928627527AA000D0603B /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		CEA8928A27527CE600D0603B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CEA8928B27527DE400D0603B /* Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Launch.swift; sourceTree = "<group>"; };
+		CECFC37B2753E8B900CE985C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CEF59EB82752857400B40DFB /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		CEF59EB92752857400B40DFB /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		CEF59EBA2752857400B40DFB /* Flip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flip.swift; sourceTree = "<group>"; };
@@ -51,8 +56,6 @@
 		CEF59ECE2752891300B40DFB /* Gradient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gradient.swift; sourceTree = "<group>"; };
 		CEF59ED027528E3100B40DFB /* Window.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.swift; sourceTree = "<group>"; };
 		CEF59ED22752948200B40DFB /* Bar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bar.swift; sourceTree = "<group>"; };
-		CEF59ED6275297A000B40DFB /* Bookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bookmark.swift; sourceTree = "<group>"; };
-		CEF59ED827529A1800B40DFB /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		CEF59EDA27529B5500B40DFB /* Invalid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Invalid.swift; sourceTree = "<group>"; };
 		CEF59EDC2752A0E900B40DFB /* NSApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSApplication.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,6 +65,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CECFC37C2753E8B900CE985C /* StoreKit.framework in Frameworks */,
+				CE82EA122753B0C8007E24F3 /* Core in Frameworks */,
+				CE82EA172753B30A007E24F3 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,10 +77,20 @@
 		CE69768F27527A6E0093D826 = {
 			isa = PBXGroup;
 			children = (
+				CE82EA152753B30A007E24F3 /* Frameworks */,
 				CEA8927C27527A9F00D0603B /* macOS */,
 				CEA8927B27527A9F00D0603B /* Products */,
 				CEF59ED52752960A00B40DFB /* Shared */,
 			);
+			sourceTree = "<group>";
+		};
+		CE82EA152753B30A007E24F3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CECFC37B2753E8B900CE985C /* StoreKit.framework */,
+				CE82EA162753B30A007E24F3 /* CloudKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		CEA8927B27527A9F00D0603B /* Products */ = {
@@ -116,8 +132,7 @@
 		CEF59ED52752960A00B40DFB /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				CEF59ED6275297A000B40DFB /* Bookmark.swift */,
-				CEF59ED827529A1800B40DFB /* Defaults.swift */,
+				CE82EA132753B122007E24F3 /* Global.swift.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -138,6 +153,9 @@
 			dependencies = (
 			);
 			name = macOS;
+			packageProductDependencies = (
+				CE82EA112753B0C8007E24F3 /* Core */,
+			);
 			productName = macOS;
 			productReference = CEA8927A27527A9F00D0603B /* Raw.app */;
 			productType = "com.apple.product-type.application";
@@ -166,6 +184,9 @@
 				Base,
 			);
 			mainGroup = CE69768F27527A6E0093D826;
+			packageReferences = (
+				CE82EA102753B0C8007E24F3 /* XCRemoteSwiftPackageReference "core" */,
+			);
 			productRefGroup = CEA8927B27527A9F00D0603B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -196,11 +217,9 @@
 				CEF59EC72752857400B40DFB /* Control.swift in Sources */,
 				CEF59ECF2752891300B40DFB /* Gradient.swift in Sources */,
 				CEF59ECC2752857400B40DFB /* Layer.swift in Sources */,
-				CEF59ED7275297A000B40DFB /* Bookmark.swift in Sources */,
 				CEF59EC82752857400B40DFB /* Separator.swift in Sources */,
 				CEF59ECA2752857400B40DFB /* Vibrant.swift in Sources */,
 				CEF59EC92752857400B40DFB /* Text.swift in Sources */,
-				CEF59ED927529A1800B40DFB /* Defaults.swift in Sources */,
 				CEF59ECD2752857400B40DFB /* Plain.swift in Sources */,
 				CEF59EDD2752A0E900B40DFB /* NSApplication.swift in Sources */,
 				CEF59ED32752948200B40DFB /* Bar.swift in Sources */,
@@ -211,6 +230,7 @@
 				CEF59ECB2752857400B40DFB /* Control.State.swift in Sources */,
 				CEF59EC32752857400B40DFB /* Action.swift in Sources */,
 				CEA8927E27527A9F00D0603B /* App.swift in Sources */,
+				CE82EA142753B122007E24F3 /* Global.swift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,11 +241,39 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 7AMWG3RLHN;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				MARKETING_VERSION = 1;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Raw;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -238,10 +286,36 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 7AMWG3RLHN;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				MARKETING_VERSION = 1;
 				PRODUCT_NAME = Raw;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -416,6 +490,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CE82EA102753B0C8007E24F3 /* XCRemoteSwiftPackageReference "core" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rawhero/core.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CE82EA112753B0C8007E24F3 /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE82EA102753B0C8007E24F3 /* XCRemoteSwiftPackageReference "core" */;
+			productName = Core;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CE69769027527A6E0093D826 /* Project object */;
 }

@@ -38,20 +38,7 @@ final class Launch: NSWindow {
                         $0 == .OK,
                         let url = browse.url
                     else { return }
-                    
-                    guard
-                        let bookmark = Bookmark(url: url),
-                        let access = bookmark.url
-                    else {
-                        Invalid().makeKeyAndOrderFront(nil)
-                        return
-                    }
-                    
-                    self?.close()
-                    
-                    Defaults.add(bookmark: bookmark)
-                    Defaults.current = bookmark
-                    Window(bookmark: bookmark, url: access).makeKeyAndOrderFront(nil)
+                    self?.open(url: url)
                 }
             }
             .store(in: &subs)
@@ -77,14 +64,7 @@ final class Launch: NSWindow {
         scroll.automaticallyAdjustsContentInsets = false
         content.addSubview(scroll)
         
-        let stack = NSStackView(
-            views: Defaults
-                .bookmarks
-                .map {
-                    let text = Text(vibrancy: true)
-                    text.stringValue = $0.id
-                    return text
-                })
+        let stack = NSStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.orientation = .vertical
         flip.addSubview(stack)
@@ -112,5 +92,35 @@ final class Launch: NSWindow {
         stack.topAnchor.constraint(equalTo: flip.topAnchor, constant: 20).isActive = true
         stack.leftAnchor.constraint(equalTo: flip.leftAnchor, constant: 30).isActive = true
         stack.rightAnchor.constraint(equalTo: flip.rightAnchor, constant: -30).isActive = true
+        
+        cloud
+            .map(\.bookmarks)
+            .removeDuplicates()
+            .sink {
+                stack
+                    .setViews(
+                        $0
+                            .map {
+                                let text = Text(vibrancy: true)
+                                text.stringValue = $0.id
+                                return text
+                            }, in: .top)
+            }
+            .store(in: &subs)
+    }
+    
+    private func open(url: URL) {
+        Task {
+            guard
+                let open = try? await cloud.bookmark(url: url)
+            else {
+                Invalid().makeKeyAndOrderFront(nil)
+                return
+            }
+            
+            close()
+            
+            Window(bookmark: open.bookmark, url: open.url).makeKeyAndOrderFront(nil)
+        }
     }
 }

@@ -1,6 +1,7 @@
 import AppKit
 import StoreKit
 import UserNotifications
+import Core
 
 @NSApplicationMain final class App: NSApplication, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     required init?(coder: NSCoder) { nil }
@@ -12,30 +13,48 @@ import UserNotifications
     func applicationWillFinishLaunching(_: Notification) {
 //        mainMenu = Menu()
         
-        if let bookmark = Defaults.current {
-            if let access = bookmark.url {
-                Window(bookmark: bookmark, url: access).makeKeyAndOrderFront(nil)
-            } else {
-                Defaults.current = nil
-                showLaunch()
+        Task {
+            do {
+                let current = try await cloud.current
+                
+                await MainActor
+                    .run {
+                        Window(bookmark: current.bookmark, url: current.url).makeKeyAndOrderFront(nil)
+                    }
+            } catch {
+                await MainActor
+                    .run {
+                        showLaunch()
+                    }
             }
-        } else {
-            showLaunch()
         }
     }
     
     func applicationDidFinishLaunching(_: Notification) {
-//        Task {
-//            switch Defaults.action {
-//            case .rate:
-//                SKStoreReviewController.requestReview()
-//            case .none:
-//                break
-//            }
+//        switch Defaults.action {
+//        case .rate:
+//            SKStoreReviewController.requestReview()
+//        case .froob:
+//            (NSApp.anyWindow() ?? Froob())
+//                .makeKeyAndOrderFront(nil)
+//        case .none:
+//            break
 //        }
-//
-//        registerForRemoteNotifications()
+
+        registerForRemoteNotifications()
 //        UNUserNotificationCenter.current().delegate = self
+        
+//        Task {
+//            _ = await UNUserNotificationCenter.request()
+//        }
+    }
+    
+    func applicationDidBecomeActive(_: Notification) {
+        cloud.pull.send()
+    }
+    
+    func application(_: NSApplication, didReceiveRemoteNotification: [String : Any]) {
+        cloud.pull.send()
     }
     
 //    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
