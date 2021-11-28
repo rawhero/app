@@ -1,9 +1,12 @@
 import AppKit
 import StoreKit
 import UserNotifications
+import Combine
 import Core
 
 @NSApplicationMain final class App: NSApplication, NSApplicationDelegate, UNUserNotificationCenterDelegate {
+    private var subs = Set<AnyCancellable>()
+    
     required init?(coder: NSCoder) { nil }
     override init() {
         super.init()
@@ -14,7 +17,13 @@ import Core
     func applicationWillFinishLaunching(_: Notification) {
 //        mainMenu = Menu()
         
-        
+        cloud
+            .dropFirst()
+            .first()
+            .sink { [weak self] _ in
+                self?.launch()
+            }
+            .store(in: &subs)
     }
     
     func applicationDidFinishLaunching(_: Notification) {
@@ -35,15 +44,7 @@ import Core
 //            _ = await UNUserNotificationCenter.request()
 //        }
         
-        Task
-            .detached(priority: .utility) {
-                do {
-                    let current = try await cloud.current
-                    await Window(bookmark: current.bookmark, url: current.url).makeKeyAndOrderFront(nil)
-                } catch {
-                    await NSApp.showLaunch()
-                }
-            }
+        
     }
     
     func applicationDidBecomeActive(_: Notification) {
@@ -61,5 +62,22 @@ import Core
     @objc override func orderFrontStandardAboutPanel(_ sender: Any?) {
 //        (anyWindow() ?? About())
 //            .makeKeyAndOrderFront(nil)
+    }
+    
+    private func launch() {
+        Task {
+            do {
+                let current = try await cloud.current
+                await MainActor
+                    .run {
+                        Window(bookmark: current.bookmark, url: current.url).makeKeyAndOrderFront(nil)
+                    }
+            } catch {
+                await MainActor
+                    .run {
+                        showLaunch()
+                    }
+            }
+        }
     }
 }

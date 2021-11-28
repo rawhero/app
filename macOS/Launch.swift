@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import Core
 
 final class Launch: NSWindow {
     private var subs = Set<AnyCancellable>()
@@ -62,6 +63,8 @@ final class Launch: NSWindow {
         scroll.verticalScroller!.controlSize = .mini
         scroll.drawsBackground = false
         scroll.automaticallyAdjustsContentInsets = false
+        scroll.scrollerInsets.top = 10
+        scroll.scrollerInsets.bottom = 10
         content.addSubview(scroll)
         
         let stack = NSStackView()
@@ -87,26 +90,31 @@ final class Launch: NSWindow {
         flip.topAnchor.constraint(equalTo: scroll.topAnchor).isActive = true
         flip.leftAnchor.constraint(equalTo: scroll.leftAnchor).isActive = true
         flip.rightAnchor.constraint(equalTo: scroll.rightAnchor).isActive = true
-        flip.bottomAnchor.constraint(equalTo: stack.bottomAnchor, constant: 30).isActive = true
+        flip.bottomAnchor.constraint(equalTo: stack.bottomAnchor, constant: 16).isActive = true
         
-        stack.topAnchor.constraint(equalTo: flip.topAnchor, constant: 20).isActive = true
-        stack.leftAnchor.constraint(equalTo: flip.leftAnchor, constant: 30).isActive = true
-        stack.rightAnchor.constraint(equalTo: flip.rightAnchor, constant: -30).isActive = true
+        stack.topAnchor.constraint(equalTo: flip.topAnchor, constant: 10).isActive = true
+        stack.leftAnchor.constraint(equalTo: flip.leftAnchor, constant: 10).isActive = true
+        stack.rightAnchor.constraint(equalTo: flip.rightAnchor, constant: -10).isActive = true
         
         cloud
             .map(\.bookmarks)
             .removeDuplicates()
-            .sink {
-                stack
-                    .setViews(
-                        $0
-                            .map {
-                                let text = Text(vibrancy: true)
-                                text.stringValue = $0.id
-                                return text
-                            }, in: .top)
+            .sink { [weak self] in
+                guard let self = self else { return }
+                stack.setViews( $0.map { self.item(bookmark: $0) }, in: .top)
             }
             .store(in: &subs)
+    }
+    
+    private func item(bookmark: Bookmark) -> Item {
+        let item = Item(bookmark: bookmark)
+        item
+            .click
+            .sink { [weak self] in
+                self?.open(bookmark: bookmark)
+            }
+            .store(in: &subs)
+        return item
     }
     
     private func open(url: URL) {
@@ -121,6 +129,21 @@ final class Launch: NSWindow {
             close()
             
             Window(bookmark: open.bookmark, url: open.url).makeKeyAndOrderFront(nil)
+        }
+    }
+    
+    private func open(bookmark: Bookmark) {
+        Task {
+            guard
+                let url = try? await cloud.open(bookmark: bookmark)
+            else {
+                Invalid().makeKeyAndOrderFront(nil)
+                return
+            }
+            
+            close()
+            
+            Window(bookmark: bookmark, url: url).makeKeyAndOrderFront(nil)
         }
     }
 }
