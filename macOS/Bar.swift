@@ -17,6 +17,6 @@ final class Bar: NSVisualEffectView {
         addSubview(title)
         
         title.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        title.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 10).isActive = true
+        title.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor).isActive = true
     }
 }

@@ -72,13 +72,13 @@ final class Launch: NSWindow {
         stack.orientation = .vertical
         flip.addSubview(stack)
         
-        open.centerXAnchor.constraint(equalTo: content.centerXAnchor).isActive = true
-        open.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
+        open.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -12).isActive = true
+        open.centerYAnchor.constraint(equalTo: content.topAnchor, constant: 26).isActive = true
         
-        title.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 30).isActive = true
-        title.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: -10).isActive = true
+        title.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 14).isActive = true
+        title.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor, constant: 5).isActive = true
         
-        separator.centerYAnchor.constraint(equalTo: content.centerYAnchor).isActive = true
+        separator.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 15).isActive = true
         separator.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 1).isActive = true
         separator.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -1).isActive = true
         
