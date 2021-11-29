@@ -33,6 +33,16 @@
 		CEF59ED32752948200B40DFB /* Bar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59ED22752948200B40DFB /* Bar.swift */; };
 		CEF59EDB27529B5500B40DFB /* Invalid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59EDA27529B5500B40DFB /* Invalid.swift */; };
 		CEF59EDD2752A0E900B40DFB /* NSApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF59EDC2752A0E900B40DFB /* NSApplication.swift */; };
+		CEFA38742755355100C05C3B /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA386F2755355100C05C3B /* Collection.swift */; };
+		CEFA38752755355100C05C3B /* CollectionItemInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA38702755355100C05C3B /* CollectionItemInfo.swift */; };
+		CEFA38762755355100C05C3B /* CollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA38712755355100C05C3B /* CollectionItem.swift */; };
+		CEFA38772755355100C05C3B /* CollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA38722755355100C05C3B /* CollectionCell.swift */; };
+		CEFA38782755355100C05C3B /* CollectionCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA38732755355100C05C3B /* CollectionCellState.swift */; };
+		CEFA387A275535C400C05C3B /* CollectionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA3879275535C400C05C3B /* CollectionImage.swift */; };
+		CEFA387C2755367F00C05C3B /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387B2755367F00C05C3B /* CGRect.swift */; };
+		CEFA38802755388B00C05C3B /* Window.List.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387D2755388B00C05C3B /* Window.List.swift */; };
+		CEFA38812755388B00C05C3B /* Window.Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387E2755388B00C05C3B /* Window.Info.swift */; };
+		CEFA38822755388B00C05C3B /* Window.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387F2755388B00C05C3B /* Window.Cell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +74,16 @@
 		CEF59ED22752948200B40DFB /* Bar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bar.swift; sourceTree = "<group>"; };
 		CEF59EDA27529B5500B40DFB /* Invalid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Invalid.swift; sourceTree = "<group>"; };
 		CEF59EDC2752A0E900B40DFB /* NSApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSApplication.swift; sourceTree = "<group>"; };
+		CEFA386F2755355100C05C3B /* Collection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
+		CEFA38702755355100C05C3B /* CollectionItemInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionItemInfo.swift; sourceTree = "<group>"; };
+		CEFA38712755355100C05C3B /* CollectionItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionItem.swift; sourceTree = "<group>"; };
+		CEFA38722755355100C05C3B /* CollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionCell.swift; sourceTree = "<group>"; };
+		CEFA38732755355100C05C3B /* CollectionCellState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionCellState.swift; sourceTree = "<group>"; };
+		CEFA3879275535C400C05C3B /* CollectionImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionImage.swift; sourceTree = "<group>"; };
+		CEFA387B2755367F00C05C3B /* CGRect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
+		CEFA387D2755388B00C05C3B /* Window.List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.List.swift; sourceTree = "<group>"; };
+		CEFA387E2755388B00C05C3B /* Window.Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Info.swift; sourceTree = "<group>"; };
+		CEFA387F2755388B00C05C3B /* Window.Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Cell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +135,13 @@
 				CEF59EB82752857400B40DFB /* Action.swift */,
 				CEA8927D27527A9F00D0603B /* App.swift */,
 				CEF59ED22752948200B40DFB /* Bar.swift */,
+				CEFA387B2755367F00C05C3B /* CGRect.swift */,
+				CEFA386F2755355100C05C3B /* Collection.swift */,
+				CEFA38722755355100C05C3B /* CollectionCell.swift */,
+				CEFA38732755355100C05C3B /* CollectionCellState.swift */,
+				CEFA3879275535C400C05C3B /* CollectionImage.swift */,
+				CEFA38712755355100C05C3B /* CollectionItem.swift */,
+				CEFA38702755355100C05C3B /* CollectionItemInfo.swift */,
 				CEF59EC02752857400B40DFB /* Control.State.swift */,
 				CEF59EBC2752857400B40DFB /* Control.swift */,
 				CEF59EBA2752857400B40DFB /* Flip.swift */,
@@ -132,6 +159,9 @@
 				CEF59EBB2752857400B40DFB /* Shape.swift */,
 				CEF59EBE2752857400B40DFB /* Text.swift */,
 				CEF59EBF2752857400B40DFB /* Vibrant.swift */,
+				CEFA387F2755388B00C05C3B /* Window.Cell.swift */,
+				CEFA387E2755388B00C05C3B /* Window.Info.swift */,
+				CEFA387D2755388B00C05C3B /* Window.List.swift */,
 				CEF59ED027528E3100B40DFB /* Window.swift */,
 				CEA8928127527AA000D0603B /* Assets.xcassets */,
 			);
@@ -224,9 +254,14 @@
 				CEA8928C27527DE400D0603B /* Launch.swift in Sources */,
 				CEF59EC62752857400B40DFB /* Shape.swift in Sources */,
 				CEF59EC72752857400B40DFB /* Control.swift in Sources */,
+				CEFA387C2755367F00C05C3B /* CGRect.swift in Sources */,
 				CE5B608D2754EA8700B48177 /* NSAttributedString.swift in Sources */,
+				CEFA38802755388B00C05C3B /* Window.List.swift in Sources */,
 				CEF59ECF2752891300B40DFB /* Gradient.swift in Sources */,
+				CEFA38822755388B00C05C3B /* Window.Cell.swift in Sources */,
+				CEFA38762755355100C05C3B /* CollectionItem.swift in Sources */,
 				CEA79E1227541F9900397B5E /* Launch.Item.swift in Sources */,
+				CEFA38812755388B00C05C3B /* Window.Info.swift in Sources */,
 				CEF59ECC2752857400B40DFB /* Layer.swift in Sources */,
 				CEF59EC82752857400B40DFB /* Separator.swift in Sources */,
 				CEF59ECA2752857400B40DFB /* Vibrant.swift in Sources */,
@@ -235,14 +270,19 @@
 				CEF59EDD2752A0E900B40DFB /* NSApplication.swift in Sources */,
 				CE5B608C2754EA8700B48177 /* NSMutableAttributedString.swift in Sources */,
 				CEF59ED32752948200B40DFB /* Bar.swift in Sources */,
+				CEFA38772755355100C05C3B /* CollectionCell.swift in Sources */,
 				CEF59EC42752857400B40DFB /* Image.swift in Sources */,
 				CEF59EC52752857400B40DFB /* Flip.swift in Sources */,
 				CEF59EDB27529B5500B40DFB /* Invalid.swift in Sources */,
 				CEF59ED127528E3100B40DFB /* Window.swift in Sources */,
+				CEFA38752755355100C05C3B /* CollectionItemInfo.swift in Sources */,
 				CEF59ECB2752857400B40DFB /* Control.State.swift in Sources */,
+				CEFA38782755355100C05C3B /* CollectionCellState.swift in Sources */,
+				CEFA38742755355100C05C3B /* Collection.swift in Sources */,
 				CEF59EC32752857400B40DFB /* Action.swift in Sources */,
 				CEA8927E27527A9F00D0603B /* App.swift in Sources */,
 				CE82EA142753B122007E24F3 /* Global.swift.swift in Sources */,
+				CEFA387A275535C400C05C3B /* CollectionImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

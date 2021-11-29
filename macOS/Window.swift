@@ -27,6 +27,8 @@ final class Window: NSWindow, NSWindowDelegate {
         titlebarAppearsTransparent = true
         delegate = self
         
+        let pictures = PassthroughSubject<Set<Core.Picture>, Never>()
+        
         let content = NSVisualEffectView()
         content.state = .active
         content.material = .menu
@@ -43,6 +45,9 @@ final class Window: NSWindow, NSWindowDelegate {
         middle.state = .active
         middle.material = .sheet
         content.addSubview(middle)
+        
+        let list = List(pictures: pictures)
+        middle.addSubview(list)
         
         separatorTop.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
         separatorTop.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 1).isActive = true
@@ -61,6 +66,16 @@ final class Window: NSWindow, NSWindowDelegate {
         top.view = Bar(url: url)
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
+        
+        list.topAnchor.constraint(equalTo: middle.topAnchor, constant: 1).isActive = true
+        list.bottomAnchor.constraint(equalTo: middle.bottomAnchor, constant: -1).isActive = true
+        list.leftAnchor.constraint(equalTo: middle.leftAnchor, constant: -1).isActive = true
+        list.rightAnchor.constraint(equalTo: middle.rightAnchor, constant: -1).isActive = true
+        
+        Task
+            .detached(priority: .utility) {
+                pictures.send(FileManager.default.pictures(at: url))
+            }
     }
     
     override func close() {

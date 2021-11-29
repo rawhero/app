@@ -12,10 +12,11 @@ extension Launch {
             let components = bookmark
                 .id
                 .replacingOccurrences(of: "file://", with: "")
+                .removingPercentEncoding?
                 .components(separatedBy: "/")
                 .dropLast()
             
-            if !components.isEmpty {
+            if let components = components, !components.isEmpty {
                 text.attributedStringValue = .make(lineBreak: .byTruncatingMiddle) { string in
                     string.append(.make(components.last!, attributes: [
                         .font: NSFont.systemFont(ofSize: NSFont.preferredFont(forTextStyle: .title3).pointSize, weight: .regular),
