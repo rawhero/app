@@ -1,16 +1,12 @@
 import AppKit
 import StoreKit
 import UserNotifications
-import Combine
 import Core
 
 @NSApplicationMain final class App: NSApplication, NSApplicationDelegate, UNUserNotificationCenterDelegate {
-    private var subs = Set<AnyCancellable>()
-    
     required init?(coder: NSCoder) { nil }
     override init() {
         super.init()
-        cloud.load()
         delegate = self
     }
     
@@ -18,12 +14,10 @@ import Core
 //        mainMenu = Menu()
         
         cloud
-            .dropFirst()
-            .first()
-            .sink { [weak self] _ in
+            .ready
+            .notify(queue: .main) { [weak self] in
                 self?.launch()
             }
-            .store(in: &subs)
     }
     
     func applicationDidFinishLaunching(_: Notification) {

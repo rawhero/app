@@ -12,7 +12,7 @@ final class Bar: NSVisualEffectView {
         
         let title = Text(vibrancy: true)
         title.stringValue = url.lastPathComponent
-        title.font = .systemFont(ofSize: NSFont.preferredFont(forTextStyle: .title3).pointSize, weight: .regular)
+        title.font = .preferredFont(forTextStyle: .body)
         title.textColor = .secondaryLabelColor
         addSubview(title)
         
