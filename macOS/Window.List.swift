@@ -8,7 +8,7 @@ extension Window {
         private let select = PassthroughSubject<CGPoint, Never>()
         
         required init?(coder: NSCoder) { nil }
-        init(pictures: PassthroughSubject<Set<Core.Picture>, Never>) {
+        init(pictures: PassthroughSubject<[Core.Picture], Never>) {
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
             scrollerInsets.bottom = 5

@@ -5,7 +5,7 @@ final class Bar: NSVisualEffectView {
     private var subs = Set<AnyCancellable>()
     
     required init?(coder: NSCoder) { nil }
-    init(url: URL, count: CurrentValueSubject<Int, Never>) {
+    init(url: URL, count: CurrentValueSubject<Int, Never>, sort: CurrentValueSubject<Window.Sort, Never>) {
         super.init(frame: .zero)
         state = .active
         material = .menu
@@ -13,8 +13,26 @@ final class Bar: NSVisualEffectView {
         let title = Text(vibrancy: true)
         addSubview(title)
         
+        let sorting = Option(icon: "arrow.up.arrow.down", size: 14)
+        sorting.toolTip = "Order images by"
+        sorting
+            .click
+            .sink {
+                let pop = Sorting(sort: sort)
+                pop.show(relativeTo: sorting.bounds, of: sorting, preferredEdge: .maxY)
+                pop.contentViewController!.view.window!.makeKey()
+            }
+            .store(in: &subs)
+        
+        let stack = NSStackView(views: [sorting])
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stack)
+        
         title.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         title.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 5).isActive = true
+        
+        stack.rightAnchor.constraint(equalTo: rightAnchor, constant: -8).isActive = true
+        stack.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
         count
             .receive(on: DispatchQueue.main)

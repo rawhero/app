@@ -3,7 +3,7 @@ import Combine
 
 extension Window {
     final class Cell: CollectionCell<Info> {
-        static let width = CGFloat(104)
+        static let width = CGFloat(120)
         static let spacing = CGFloat(4)
         static let width_spacing = width + spacing
         private weak var image: CollectionImage!
@@ -49,7 +49,7 @@ extension Window {
                                 self?.image.contentsGravity = .resizeAspectFill
                             case .error:
                                 self?.image.contents = NSImage(systemSymbolName: "exclamationmark.triangle.fill", accessibilityDescription: nil)?
-                                    .withSymbolConfiguration(.init(pointSize: 10, weight: .light)
+                                    .withSymbolConfiguration(.init(pointSize: 12, weight: .light)
                                                                 .applying(.init(hierarchicalColor: .systemPink)))
                             }
                         }
@@ -76,7 +76,7 @@ extension Window {
             self.margin = margin
             
             super.init()
-            
+            backgroundColor = NSColor.quaternaryLabelColor.cgColor
             addSublayer(image)
             addSublayer(gradient)
             addSublayer(margin)

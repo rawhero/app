@@ -28,6 +28,8 @@ final class Window: NSWindow, NSWindowDelegate {
         delegate = self
         
         let pictures = PassthroughSubject<Set<Core.Picture>, Never>()
+        let sorted = PassthroughSubject<[Core.Picture], Never>()
+        let sort = CurrentValueSubject<Sort, Never>(.name)
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -46,7 +48,7 @@ final class Window: NSWindow, NSWindowDelegate {
         middle.material = .sheet
         content.addSubview(middle)
         
-        let list = List(pictures: pictures)
+        let list = List(pictures: sorted)
         middle.addSubview(list)
         
         separatorTop.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -64,7 +66,7 @@ final class Window: NSWindow, NSWindowDelegate {
         
         let count = CurrentValueSubject<Int, Never>(0)
         let top = NSTitlebarAccessoryViewController()
-        top.view = Bar(url: url, count: count)
+        top.view = Bar(url: url, count: count, sort: sort)
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
         
@@ -72,6 +74,30 @@ final class Window: NSWindow, NSWindowDelegate {
         list.bottomAnchor.constraint(equalTo: middle.bottomAnchor).isActive = true
         list.leftAnchor.constraint(equalTo: middle.leftAnchor).isActive = true
         list.rightAnchor.constraint(equalTo: middle.rightAnchor).isActive = true
+        
+        pictures
+            .combineLatest(sort)
+            .map { pictures, sort in
+                switch sort {
+                case .name:
+                    return pictures
+                        .sorted { a, b in
+                            a.id.absoluteString.localizedCaseInsensitiveCompare(b.id.absoluteString) == .orderedAscending
+                        }
+                case .resolution:
+                    return pictures
+                        .sorted { a, b in
+                            a.size > b.size
+                        }
+                case .size:
+                    return pictures
+                        .sorted { a, b in
+                            a.bytes > b.bytes
+                        }
+                }
+            }
+            .subscribe(sorted)
+            .store(in: &subs)
         
         Task
             .detached(priority: .utility) {
@@ -102,6 +128,8 @@ final class Window: NSWindow, NSWindowDelegate {
     }
     
     func windowDidEnterFullScreen(_: Notification) {
+        (contentView as? NSVisualEffectView)?.material = .sheet
+        
         titlebarAccessoryViewControllers
             .compactMap {
                 $0.view as? NSVisualEffectView
@@ -112,6 +140,8 @@ final class Window: NSWindow, NSWindowDelegate {
     }
 
     func windowDidExitFullScreen(_: Notification) {
+        (contentView as? NSVisualEffectView)?.material = .menu
+        
         titlebarAccessoryViewControllers
             .compactMap {
                 $0.view as? NSVisualEffectView
