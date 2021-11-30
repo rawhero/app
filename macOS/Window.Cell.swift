@@ -3,9 +3,9 @@ import Combine
 
 extension Window {
     final class Cell: CollectionCell<Info> {
-        static let height = CGFloat(104)
-        static let spacing = CGFloat(2)
-        static let height_spacing = height + spacing
+        static let width = CGFloat(104)
+        static let spacing = CGFloat(4)
+        static let width_spacing = width + spacing
         private weak var image: CollectionImage!
         private weak var margin: Shape!
         private weak var gradient: Gradient!
@@ -72,7 +72,7 @@ extension Window {
             
             let margin = Shape()
             margin.fillColor = .clear
-            margin.lineWidth = 2
+            margin.lineWidth = 3
             self.margin = margin
             
             super.init()

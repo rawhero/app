@@ -15,7 +15,7 @@ extension Window {
             
             let thumbnails = Camera(strategy: .thumbnail)
             let info = PassthroughSubject<[Info], Never>()
-            let width = PassthroughSubject<CGFloat, Never>()
+            let columns = PassthroughSubject<(width: CGFloat, count: Int), Never>()
             
             NotificationCenter
                 .default
@@ -27,36 +27,52 @@ extension Window {
                     $0 == self?.contentView
                 }
                 .map {
-                    $0.bounds.width
+                    $0.bounds.width - Cell.spacing
                 }
                 .removeDuplicates()
-                .subscribe(width)
+                .map { width in
+                    let count = max(Int(floor(width / Cell.width_spacing)), 1)
+                    return (width: Cell.width + (width.truncatingRemainder(dividingBy: Cell.width_spacing) / .init(count)),
+                            count: count)
+                }
+                .removeDuplicates { (before: (width: CGFloat, count: Int), current: (width: CGFloat, count: Int)) -> Bool in
+                    before.width == current.width && before.count == current.count
+                }
+                .subscribe(columns)
                 .store(in: &subs)
             
             info
                 .removeDuplicates()
-                .combineLatest(width)
-                .sink { [weak self] info, width in
-                    let maxWidth = width - Self.insets2
+                .combineLatest(columns)
+                .sink { [weak self] info, columns in
                     let result = info
-                        .reduce(into: (items: Set<CollectionItem<Info>>(), x: Cell.spacing, y: Cell.spacing)) {
-                            if $0.x + $1.width > maxWidth {
-                                $0.x = Cell.spacing
-                                $0.y += Cell.height_spacing
-                            }
-                            
-                            $0.items.insert(.init(
-                                                info: $1,
-                                                rect: .init(
-                                                    x: $0.x,
-                                                    y: $0.y,
-                                                    width: $1.width,
-                                                    height: Cell.height)))
-                            
-                            $0.x += Cell.spacing + $1.width
+                        .reduce(into: (
+                            items: Set<CollectionItem<Info>>(),
+                            y: Array(repeating: Cell.spacing, count: columns.count),
+                            index: 0)) {
+                                
+                                let width_spacing = Cell.spacing + columns.width
+                                let height = $1.size.width > 0 && $1.size.height > 0
+                                ? columns.width / .init($1.size.width) * .init($1.size.height)
+                                : columns.width
+                                
+                                $0.items.insert(.init(
+                                    info: $1,
+                                    rect: .init(
+                                        x: (width_spacing * .init($0.index)) + Cell.spacing,
+                                        y: $0.y[$0.index],
+                                        width: columns.width,
+                                        height: height)))
+                                $0.y[$0.index] += height + Cell.spacing
+                                
+                                if $0.index < columns.count - 1 {
+                                    $0.index += 1
+                                } else {
+                                    $0.index = 0
+                                }
                         }
                     self?.items.send(result.items)
-                    self?.size.send(.init(width: 0, height: result.y + Cell.height_spacing))
+                    self?.size.send(.init(width: 0, height: result.y.max() ?? 0))
                 }
                 .store(in: &subs)
             
