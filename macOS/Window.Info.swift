@@ -9,7 +9,9 @@ extension Window {
         
         init(picture: Core.Picture, publisher: Camera.Pub) {
             id = picture.id.absoluteString
-            width = (Cell.height_margin / .init(picture.size.height) * .init(picture.size.width)) + Cell.margin2
+            width = picture.size.width > 0 && picture.size.height > 0
+                ? ceil(Cell.height / .init(picture.size.height) * .init(picture.size.width))
+            : Cell.height
             self.publisher = publisher
         }
         

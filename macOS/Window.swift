@@ -62,8 +62,9 @@ final class Window: NSWindow, NSWindowDelegate {
         middle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 1).isActive = true
         middle.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -1).isActive = true
         
+        let count = CurrentValueSubject<Int, Never>(0)
         let top = NSTitlebarAccessoryViewController()
-        top.view = Bar(url: url)
+        top.view = Bar(url: url, count: count)
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
         
@@ -74,7 +75,9 @@ final class Window: NSWindow, NSWindowDelegate {
         
         Task
             .detached(priority: .utility) {
-                pictures.send(FileManager.default.pictures(at: url))
+                let photos = FileManager.default.pictures(at: url)
+                pictures.send(photos)
+                count.send(photos.count)
             }
     }
     

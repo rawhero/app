@@ -4,8 +4,7 @@ import Core
 
 extension Window {
     final class List: Collection<Cell, Info> {
-        private static let insets = CGFloat(10)
-        private static let insets2 = insets + insets
+        private static let insets2 = Cell.spacing + Cell.spacing
         private let select = PassthroughSubject<CGPoint, Never>()
         
         required init?(coder: NSCoder) { nil }
@@ -40,9 +39,9 @@ extension Window {
                 .sink { [weak self] info, width in
                     let maxWidth = width - Self.insets2
                     let result = info
-                        .reduce(into: (items: Set<CollectionItem<Info>>(), x: Self.insets, y: Self.insets)) {
+                        .reduce(into: (items: Set<CollectionItem<Info>>(), x: Cell.spacing, y: Cell.spacing)) {
                             if $0.x + $1.width > maxWidth {
-                                $0.x = Self.insets
+                                $0.x = Cell.spacing
                                 $0.y += Cell.height_spacing
                             }
                             
@@ -57,7 +56,7 @@ extension Window {
                             $0.x += Cell.spacing + $1.width
                         }
                     self?.items.send(result.items)
-                    self?.size.send(.init(width: 0, height: result.y + Self.insets + Cell.height))
+                    self?.size.send(.init(width: 0, height: result.y + Cell.height_spacing))
                 }
                 .store(in: &subs)
             
