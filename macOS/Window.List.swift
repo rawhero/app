@@ -4,10 +4,8 @@ import Core
 
 extension Window {
     final class List: Collection<Cell, Info> {
-        static let width = CGFloat(228)
-        private static let insets = CGFloat(30)
+        private static let insets = CGFloat(10)
         private static let insets2 = insets + insets
-        private static let width_insets2 = width - insets2
         private let select = PassthroughSubject<CGPoint, Never>()
         
         required init?(coder: NSCoder) { nil }
@@ -17,25 +15,49 @@ extension Window {
             scrollerInsets.bottom = 5
             
             let thumbnails = Camera(strategy: .thumbnail)
-            let vertical = CGFloat(15)
             let info = PassthroughSubject<[Info], Never>()
+            let width = PassthroughSubject<CGFloat, Never>()
+            
+            NotificationCenter
+                .default
+                .publisher(for: NSView.frameDidChangeNotification)
+                .compactMap {
+                    $0.object as? NSClipView
+                }
+                .filter { [weak self] in
+                    $0 == self?.contentView
+                }
+                .map {
+                    $0.bounds.width
+                }
+                .removeDuplicates()
+                .subscribe(width)
+                .store(in: &subs)
             
             info
                 .removeDuplicates()
-                .sink { [weak self] info in
+                .combineLatest(width)
+                .sink { [weak self] info, width in
+                    let maxWidth = width - Self.insets2
                     let result = info
-                        .reduce(into: (items: Set<CollectionItem<Info>>(), y: vertical)) {
+                        .reduce(into: (items: Set<CollectionItem<Info>>(), x: Self.insets, y: Self.insets)) {
+                            if $0.x + $1.width > maxWidth {
+                                $0.x = Self.insets
+                                $0.y += Cell.height_spacing
+                            }
+                            
                             $0.items.insert(.init(
                                                 info: $1,
                                                 rect: .init(
-                                                    x: Self.insets,
+                                                    x: $0.x,
                                                     y: $0.y,
-                                                    width: Self.width_insets2,
+                                                    width: $1.width,
                                                     height: Cell.height)))
-                            $0.y += Cell.height + 1
+                            
+                            $0.x += Cell.spacing + $1.width
                         }
                     self?.items.send(result.items)
-                    self?.size.send(.init(width: 0, height: result.y + vertical))
+                    self?.size.send(.init(width: 0, height: result.y + Self.insets + Cell.height))
                 }
                 .store(in: &subs)
             
@@ -64,7 +86,7 @@ extension Window {
                     Task {
                         var items = [Info]()
                         for picture in pictures {
-                            await items.append(Info(picture: picture, publisher: thumbnails.publisher(for: picture.id, size: picture.size)))
+                            await items.append(.init(picture: picture, publisher: thumbnails.publisher(for: picture)))
                         }
                         info.send(items)
                     }

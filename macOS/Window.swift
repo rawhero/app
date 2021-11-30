@@ -67,10 +67,10 @@ final class Window: NSWindow, NSWindowDelegate {
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
         
-        list.topAnchor.constraint(equalTo: middle.topAnchor, constant: 1).isActive = true
-        list.bottomAnchor.constraint(equalTo: middle.bottomAnchor, constant: -1).isActive = true
-        list.leftAnchor.constraint(equalTo: middle.leftAnchor, constant: -1).isActive = true
-        list.rightAnchor.constraint(equalTo: middle.rightAnchor, constant: -1).isActive = true
+        list.topAnchor.constraint(equalTo: middle.topAnchor).isActive = true
+        list.bottomAnchor.constraint(equalTo: middle.bottomAnchor).isActive = true
+        list.leftAnchor.constraint(equalTo: middle.leftAnchor).isActive = true
+        list.rightAnchor.constraint(equalTo: middle.rightAnchor).isActive = true
         
         Task
             .detached(priority: .utility) {
