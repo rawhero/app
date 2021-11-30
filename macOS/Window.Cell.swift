@@ -20,24 +20,22 @@ extension Window {
                 
                 if item.info != oldValue?.info {
                     sub?.cancel()
-                    image.contents = nil
-                    
+                    image.contents = NSImage(systemSymbolName: "photo.circle.fill", accessibilityDescription: nil)?
+                        .withSymbolConfiguration(.init(pointSize: 40, weight: .ultraLight)
+                                                    .applying(.init(hierarchicalColor: .tertiaryLabelColor)))
                     sub = item
                         .info
                         .publisher
                         .sink { [weak self] in
-                            self?.image.contents = $0
+                            switch $0 {
+                            case let .image(image):
+                                self?.image.contents = image
+                            case .error:
+                                self?.image.contents = NSImage(systemSymbolName: "exclamationmark.triangle.fill", accessibilityDescription: nil)?
+                                    .withSymbolConfiguration(.init(pointSize: 40, weight: .ultraLight)
+                                                                .applying(.init(hierarchicalColor: .systemPink)))
+                            }
                         }
-//                    print(self.superlayer.voew)
-                    
-//                    icon.contents = NSImage(systemSymbolName: "network", accessibilityDescription: nil)?
-//                        .withSymbolConfiguration(.init(pointSize: 32, weight: .ultraLight)
-//                                                    .applying(.init(hierarchicalColor: .tertiaryLabelColor)))
-//
-//                    Task
-//                        .detached { [weak self] in
-//                            await self?.update(icon: item.info.icon)
-//                        }
                 }
             }
         }
