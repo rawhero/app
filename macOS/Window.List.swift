@@ -5,10 +5,10 @@ import Core
 extension Window {
     final class List: Collection<Cell, Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
-        private let select = PassthroughSubject<CGPoint, Never>()
+        private let click = PassthroughSubject<CGPoint, Never>()
         
         required init?(coder: NSCoder) { nil }
-        init(pictures: PassthroughSubject<[Core.Picture], Never>) {
+        init(pictures: PassthroughSubject<[Core.Picture], Never>, selected: CurrentValueSubject<[Core.Picture], Never>) {
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
             scrollerInsets.bottom = 5
@@ -52,9 +52,7 @@ extension Window {
                             index: 0)) {
                                 
                                 let width_spacing = Cell.spacing + columns.width
-                                let height = $1.size.width > 0 && $1.size.height > 0
-                                ? columns.width / .init($1.size.width) * .init($1.size.height)
-                                : columns.width
+                                let height = $1.height(for: columns.width)
                                 
                                 $0.items.insert(.init(
                                     info: $1,
@@ -76,22 +74,36 @@ extension Window {
                 }
                 .store(in: &subs)
             
-            select
-                .map { [weak self] point in
+            click
+                .compactMap { [weak self] point in
                     self?
                         .cells
-                        .compactMap(\.item)
                         .first {
                             $0
-                                .rect
-                                .contains(point)
+                                .item
+                                .map {
+                                    $0
+                                        .rect
+                                        .contains(point)
+                                }
+                            ?? false
                         }
                 }
-                .compactMap {
-                    $0?.info.id
-                }
-                .sink { tag in
-//                    change.send(tag)
+                .sink { [weak self] cell in
+                    guard let info = cell.item?.info else { return }
+                    
+                    switch cell.state {
+                    case .pressed:
+                        cell.state = .none
+                        selected.value.remove {
+                            $0.id == info.picture.id
+                        }
+                        self?.selected.remove(info.id)
+                    default:
+                        cell.state = .pressed
+                        selected.value.append(info.picture)
+                        self?.selected.insert(info.id)
+                    }
                 }
                 .store(in: &subs)
             
@@ -111,10 +123,10 @@ extension Window {
         
         override func mouseUp(with: NSEvent) {
             switch with.clickCount {
-            case 1:
-                select.send(point(with: with))
-            default:
+            case 2:
                 break
+            default:
+                click.send(point(with: with))
             }
         }
     }

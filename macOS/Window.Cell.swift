@@ -76,7 +76,7 @@ extension Window {
             self.margin = margin
             
             super.init()
-            backgroundColor = NSColor.quaternaryLabelColor.cgColor
+            backgroundColor = NSColor.labelColor.withAlphaComponent(0.05).cgColor
             addSublayer(image)
             addSublayer(gradient)
             addSublayer(margin)

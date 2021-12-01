@@ -2,12 +2,13 @@ import AppKit
 import Combine
 
 class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
+    var selected = Set<Info.ID>()
+    var highlighted: Info.ID? = nil
     final var subs = Set<AnyCancellable>()
     final var cells = Set<Cell>()
     final let render = PassthroughSubject<Void, Never>()
     final let items = PassthroughSubject<Set<CollectionItem<Info>>, Never>()
     final let size = PassthroughSubject<CGSize, Never>()
-    final let highlighted = CurrentValueSubject<Info.ID?, Never>(nil)
     private let clear = PassthroughSubject<Void, Never>()
     private let highlight = PassthroughSubject<CGPoint, Never>()
 
@@ -47,6 +48,8 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
                     }
             }
             .sink { [weak self] visible in
+                guard let selected = self?.selected else { return }
+                
                 self?
                     .cells
                     .filter {
@@ -77,7 +80,7 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
                                 self?.cells.insert($0)
                                 return $0
                             } (Cell())
-                        cell.state = .none
+                        cell.state = selected.contains(item.info.id) ? .pressed : .none
                         cell.item = item
                         content.layer!.addSublayer(cell)
                     }
@@ -104,35 +107,33 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
             .subscribe(clip)
             .store(in: &subs)
         
-        highlighted
-            .sink { [weak self] highlighted in
+        highlight
+            .compactMap { [weak self] point in
+                self?
+                    .cells
+                    .first {
+                        $0
+                            .item
+                            .map {
+                                $0
+                                    .rect
+                                    .contains(point)
+                            }
+                        ?? false
+                    }
+            }
+            .sink { [weak self] in
+                guard let id = $0.item?.info.id else { return }
+                self?.highlighted = id
+                
                 self?
                     .cells
                     .filter {
                         $0.state != .pressed && $0.state != .dragging
                     }
                     .forEach {
-                        $0.state = $0.item?.info.id == highlighted ? .highlighted : .none
+                        $0.state = $0.item?.info.id == id ? .highlighted : .none
                     }
-            }
-            .store(in: &subs)
-        
-        highlight
-            .map { [weak self] point in
-                self?
-                    .cells
-                    .compactMap(\.item)
-                    .first {
-                        $0
-                            .rect
-                            .contains(point)
-                    }
-            }
-            .map {
-                $0?.info.id
-            }
-            .sink { [weak self] in
-                self?.highlighted.send($0)
             }
             .store(in: &subs)
         

@@ -1,7 +1,7 @@
 import Foundation
 
 protocol CollectionItemInfo: Hashable {
-    associatedtype ID : Equatable
+    associatedtype ID : Hashable
     
     var id: ID { get }
 }

@@ -30,17 +30,12 @@ final class Window: NSWindow, NSWindowDelegate {
         let pictures = PassthroughSubject<Set<Core.Picture>, Never>()
         let sorted = PassthroughSubject<[Core.Picture], Never>()
         let sort = CurrentValueSubject<Sort, Never>(.name)
+        let selected = CurrentValueSubject<[Core.Picture], Never>([])
         
         let content = NSVisualEffectView()
         content.state = .active
         content.material = .menu
         contentView = content
-        
-        let separatorTop = Separator(mode: .horizontal)
-        content.addSubview(separatorTop)
-        
-        let separatorBottom = Separator(mode: .horizontal)
-        content.addSubview(separatorBottom)
         
         let middle = NSVisualEffectView()
         middle.translatesAutoresizingMaskIntoConstraints = false
@@ -48,27 +43,26 @@ final class Window: NSWindow, NSWindowDelegate {
         middle.material = .sheet
         content.addSubview(middle)
         
-        let list = List(pictures: sorted)
+        let list = List(pictures: sorted, selected: selected)
         middle.addSubview(list)
         
-        separatorTop.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
-        separatorTop.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 1).isActive = true
-        separatorTop.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -1).isActive = true
-        
-        separatorBottom.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -100).isActive = true
-        separatorBottom.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 1).isActive = true
-        separatorBottom.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -1).isActive = true
-        
-        middle.topAnchor.constraint(equalTo: separatorTop.bottomAnchor).isActive = true
-        middle.bottomAnchor.constraint(equalTo: separatorBottom.topAnchor).isActive = true
+        middle.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
+        middle.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
         middle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 1).isActive = true
         middle.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -1).isActive = true
         
         let count = CurrentValueSubject<Int, Never>(0)
+        
         let top = NSTitlebarAccessoryViewController()
         top.view = Bar(url: url, count: count, sort: sort)
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
+        
+        let bottom = NSTitlebarAccessoryViewController()
+        bottom.view = Subbar(selected: selected)
+        bottom.layoutAttribute = .bottom
+        bottom.view.frame.size.height = 40
+        addTitlebarAccessoryViewController(bottom)
         
         list.topAnchor.constraint(equalTo: middle.topAnchor).isActive = true
         list.bottomAnchor.constraint(equalTo: middle.bottomAnchor).isActive = true
@@ -128,8 +122,6 @@ final class Window: NSWindow, NSWindowDelegate {
     }
     
     func windowDidEnterFullScreen(_: Notification) {
-        (contentView as? NSVisualEffectView)?.material = .sheet
-        
         titlebarAccessoryViewControllers
             .compactMap {
                 $0.view as? NSVisualEffectView
@@ -140,8 +132,6 @@ final class Window: NSWindow, NSWindowDelegate {
     }
 
     func windowDidExitFullScreen(_: Notification) {
-        (contentView as? NSVisualEffectView)?.material = .menu
-        
         titlebarAccessoryViewControllers
             .compactMap {
                 $0.view as? NSVisualEffectView
