@@ -29,6 +29,7 @@ final class Window: NSWindow, NSWindowDelegate {
         
         let pictures = PassthroughSubject<Set<Core.Picture>, Never>()
         let sorted = PassthroughSubject<[Core.Picture], Never>()
+        let clear = PassthroughSubject<Void, Never>()
         let sort = CurrentValueSubject<Sort, Never>(.name)
         let selected = CurrentValueSubject<[Core.Picture], Never>([])
         
@@ -37,19 +38,26 @@ final class Window: NSWindow, NSWindowDelegate {
         content.material = .menu
         contentView = content
         
+        let separator = Separator(mode: .horizontal)
+        content.addSubview(separator)
+        
         let middle = NSVisualEffectView()
         middle.translatesAutoresizingMaskIntoConstraints = false
         middle.state = .active
         middle.material = .sheet
         content.addSubview(middle)
         
-        let list = List(pictures: sorted, selected: selected)
+        let list = List(pictures: sorted, selected: selected, clear: clear)
         middle.addSubview(list)
         
-        middle.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
+        separator.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
+        separator.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+        separator.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
+        
+        middle.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
         middle.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        middle.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 1).isActive = true
-        middle.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -1).isActive = true
+        middle.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+        middle.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
         
         let count = CurrentValueSubject<Int, Never>(0)
         
@@ -59,9 +67,9 @@ final class Window: NSWindow, NSWindowDelegate {
         addTitlebarAccessoryViewController(top)
         
         let bottom = NSTitlebarAccessoryViewController()
-        bottom.view = Subbar(selected: selected)
+        bottom.view = Subbar(selected: selected, clear: clear)
         bottom.layoutAttribute = .bottom
-        bottom.view.frame.size.height = 40
+        bottom.view.frame.size.height = 50
         addTitlebarAccessoryViewController(bottom)
         
         list.topAnchor.constraint(equalTo: middle.topAnchor).isActive = true
@@ -91,6 +99,12 @@ final class Window: NSWindow, NSWindowDelegate {
                 }
             }
             .subscribe(sorted)
+            .store(in: &subs)
+        
+        clear
+            .sink {
+                selected.value = []
+            }
             .store(in: &subs)
         
         Task

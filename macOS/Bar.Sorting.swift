@@ -32,7 +32,7 @@ extension Bar {
                 }
                 .store(in: &subs)
             
-            let resolution = Option(title: "Resolution", image: "arrow.up.left.and.arrow.down.right")
+            let resolution = Option(title: "Dimensions", image: "arrow.up.left.and.arrow.down.right")
             resolution
                 .click
                 .sink { [weak self] in

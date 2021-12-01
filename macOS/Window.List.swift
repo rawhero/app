@@ -6,15 +6,18 @@ extension Window {
     final class List: Collection<Cell, Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
         private let click = PassthroughSubject<CGPoint, Never>()
+        private let info = PassthroughSubject<[Info], Never>()
+        private let thumbnails = Camera(strategy: .thumbnail)
         
         required init?(coder: NSCoder) { nil }
-        init(pictures: PassthroughSubject<[Core.Picture], Never>, selected: CurrentValueSubject<[Core.Picture], Never>) {
+        init(pictures: PassthroughSubject<[Core.Picture], Never>,
+             selected: CurrentValueSubject<[Core.Picture], Never>,
+             clear: PassthroughSubject<Void, Never>) {
+            
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
             scrollerInsets.bottom = 5
             
-            let thumbnails = Camera(strategy: .thumbnail)
-            let info = PassthroughSubject<[Info], Never>()
             let columns = PassthroughSubject<(width: CGFloat, count: Int), Never>()
             
             NotificationCenter
@@ -108,15 +111,16 @@ extension Window {
                 .store(in: &subs)
             
             pictures
-                .receive(on: DispatchQueue.main)
                 .sink { pictures in
-                    Task {
-                        var items = [Info]()
-                        for picture in pictures {
-                            await items.append(.init(picture: picture, publisher: thumbnails.publisher(for: picture)))
-                        }
-                        info.send(items)
+                    Task { [weak self] in
+                        await self?.received(pictures: pictures)
                     }
+                }
+                .store(in: &subs)
+            
+            clear
+                .sink { [weak self] in
+                    self?.clear.send()
                 }
                 .store(in: &subs)
         }
@@ -128,6 +132,14 @@ extension Window {
             default:
                 click.send(point(with: with))
             }
+        }
+        
+        @MainActor private func received(pictures: [Core.Picture]) async {
+            var items = [Info]()
+            for picture in pictures {
+                await items.append(.init(picture: picture, publisher: thumbnails.publisher(for: picture)))
+            }
+            info.send(items)
         }
     }
 }

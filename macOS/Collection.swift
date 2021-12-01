@@ -9,7 +9,8 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
     final let render = PassthroughSubject<Void, Never>()
     final let items = PassthroughSubject<Set<CollectionItem<Info>>, Never>()
     final let size = PassthroughSubject<CGSize, Never>()
-    private let clear = PassthroughSubject<Void, Never>()
+    final let clear = PassthroughSubject<Void, Never>()
+    private let unhighlight = PassthroughSubject<Void, Never>()
     private let highlight = PassthroughSubject<CGPoint, Never>()
 
     required init?(coder: NSCoder) { nil }
@@ -137,8 +138,10 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
             }
             .store(in: &subs)
         
-        clear
+        unhighlight
             .sink { [weak self] in
+                self?.highlighted = nil
+                
                 self?
                     .cells
                     .filter {
@@ -149,10 +152,23 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
                     }
             }
             .store(in: &subs)
+        
+        clear
+            .sink { [weak self] in
+                self?.selected = []
+                self?.highlighted = nil
+                
+                self?
+                    .cells
+                    .forEach {
+                        $0.state = .none
+                    }
+            }
+            .store(in: &subs)
     }
     
     final override func mouseExited(with: NSEvent) {
-        clear.send()
+        unhighlight.send()
     }
     
     final override func mouseMoved(with: NSEvent) {
