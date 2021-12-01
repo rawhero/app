@@ -162,11 +162,15 @@ final class Subbar: NSVisualEffectView {
             .store(in: &subs)
         
         single.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        single.rightAnchor.constraint(lessThanOrEqualTo: right.leftAnchor).isActive = true
         multiple.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        multiple.rightAnchor.constraint(lessThanOrEqualTo: right.leftAnchor).isActive = true
         right.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
         single.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20).isActive = true
         multiple.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20).isActive = true
-        right.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15).isActive = true
+        let rightRight = right.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15)
+        rightRight.priority = .defaultLow
+        rightRight.isActive = true
     }
 }

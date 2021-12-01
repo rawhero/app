@@ -5,7 +5,7 @@ import Core
 extension Window {
     final class List: Collection<Cell, Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
-        private let click = PassthroughSubject<CGPoint, Never>()
+        private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         private let info = PassthroughSubject<[Info], Never>()
         private let thumbnails = Camera(strategy: .thumbnail)
         
@@ -78,7 +78,7 @@ extension Window {
                 .store(in: &subs)
             
             click
-                .compactMap { [weak self] point in
+                .compactMap { [weak self] click in
                     self?
                         .cells
                         .first {
@@ -87,25 +87,45 @@ extension Window {
                                 .map {
                                     $0
                                         .rect
-                                        .contains(point)
+                                        .contains(click.point)
                                 }
                             ?? false
                         }
+                        .map {
+                            (cell: $0, multiple: click.multiple)
+                        }
                 }
-                .sink { [weak self] cell in
-                    guard let info = cell.item?.info else { return }
+                .sink { [weak self] select in
+                    guard let info = select.cell.item?.info else { return }
                     
-                    switch cell.state {
+                    switch select.cell.state {
                     case .pressed:
-                        cell.state = .none
+                        select.cell.state = .none
                         selected.value.remove {
                             $0.id == info.picture.id
                         }
                         self?.selected.remove(info.id)
                     default:
-                        cell.state = .pressed
-                        selected.value.append(info.picture)
-                        self?.selected.insert(info.id)
+                        if !select.multiple {
+                            self?
+                                .cells
+                                .filter {
+                                    $0.state == .pressed
+                                }
+                                .forEach {
+                                    $0.state = .none
+                                }
+                        }
+                        
+                        select.cell.state = .pressed
+                        
+                        if select.multiple {
+                            self?.selected.insert(info.id)
+                            selected.value.append(info.picture)
+                        } else {
+                            self?.selected = [info.id]
+                            selected.value = [info.picture]
+                        }
                     }
                 }
                 .store(in: &subs)
@@ -130,7 +150,8 @@ extension Window {
             case 2:
                 break
             default:
-                click.send(point(with: with))
+                click.send((point: point(with: with), multiple: with.modifierFlags.contains(.shift)
+                            || with.modifierFlags.contains(.command)))
             }
         }
         
