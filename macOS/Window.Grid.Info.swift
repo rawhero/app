@@ -1,18 +1,18 @@
 import Foundation
 import Core
 
-extension Window {
+extension Window.Grid {
     struct Info: CollectionItemInfo {
         var id: String {
             picture.id.absoluteString
         }
         
         let picture: Picture
-        let publisher: Camera.Pub
+        let thumbnail: Camera.Pub
         
-        init(picture: Core.Picture, publisher: Camera.Pub) {
+        init(picture: Core.Picture, thumbnail: Camera.Pub) {
             self.picture = picture
-            self.publisher = publisher
+            self.thumbnail = thumbnail
         }
         
         func height(for width: CGFloat) -> CGFloat {

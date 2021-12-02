@@ -47,9 +47,9 @@
 		CEFA38782755355100C05C3B /* CollectionCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA38732755355100C05C3B /* CollectionCellState.swift */; };
 		CEFA387A275535C400C05C3B /* CollectionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA3879275535C400C05C3B /* CollectionImage.swift */; };
 		CEFA387C2755367F00C05C3B /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387B2755367F00C05C3B /* CGRect.swift */; };
-		CEFA38802755388B00C05C3B /* Window.List.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387D2755388B00C05C3B /* Window.List.swift */; };
-		CEFA38812755388B00C05C3B /* Window.Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387E2755388B00C05C3B /* Window.Info.swift */; };
-		CEFA38822755388B00C05C3B /* Window.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387F2755388B00C05C3B /* Window.Cell.swift */; };
+		CEFA38802755388B00C05C3B /* Window.Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387D2755388B00C05C3B /* Window.Grid.swift */; };
+		CEFA38812755388B00C05C3B /* Window.Grid.Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387E2755388B00C05C3B /* Window.Grid.Info.swift */; };
+		CEFA38822755388B00C05C3B /* Window.Grid.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387F2755388B00C05C3B /* Window.Grid.Cell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,9 +95,9 @@
 		CEFA38732755355100C05C3B /* CollectionCellState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionCellState.swift; sourceTree = "<group>"; };
 		CEFA3879275535C400C05C3B /* CollectionImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionImage.swift; sourceTree = "<group>"; };
 		CEFA387B2755367F00C05C3B /* CGRect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
-		CEFA387D2755388B00C05C3B /* Window.List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.List.swift; sourceTree = "<group>"; };
-		CEFA387E2755388B00C05C3B /* Window.Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Info.swift; sourceTree = "<group>"; };
-		CEFA387F2755388B00C05C3B /* Window.Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Cell.swift; sourceTree = "<group>"; };
+		CEFA387D2755388B00C05C3B /* Window.Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Grid.swift; sourceTree = "<group>"; };
+		CEFA387E2755388B00C05C3B /* Window.Grid.Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Grid.Info.swift; sourceTree = "<group>"; };
+		CEFA387F2755388B00C05C3B /* Window.Grid.Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Grid.Cell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,9 +178,9 @@
 				CEED0F962757CBDF0076CFBC /* Switch.swift */,
 				CEF59EBE2752857400B40DFB /* Text.swift */,
 				CEF59EBF2752857400B40DFB /* Vibrant.swift */,
-				CEFA387F2755388B00C05C3B /* Window.Cell.swift */,
-				CEFA387E2755388B00C05C3B /* Window.Info.swift */,
-				CEFA387D2755388B00C05C3B /* Window.List.swift */,
+				CEFA387F2755388B00C05C3B /* Window.Grid.Cell.swift */,
+				CEFA387E2755388B00C05C3B /* Window.Grid.Info.swift */,
+				CEFA387D2755388B00C05C3B /* Window.Grid.swift */,
 				CE8802A32756989600909C85 /* Window.Sort.swift */,
 				CEF59ED027528E3100B40DFB /* Window.swift */,
 				CEA07F912758F11A00FF04CE /* Window.Zoom.swift */,
@@ -279,12 +279,12 @@
 				CE8802A42756989600909C85 /* Window.Sort.swift in Sources */,
 				CE5B608D2754EA8700B48177 /* NSAttributedString.swift in Sources */,
 				CE8802A2275697A000909C85 /* Bar.Option.swift in Sources */,
-				CEFA38802755388B00C05C3B /* Window.List.swift in Sources */,
+				CEFA38802755388B00C05C3B /* Window.Grid.swift in Sources */,
 				CEF59ECF2752891300B40DFB /* Gradient.swift in Sources */,
-				CEFA38822755388B00C05C3B /* Window.Cell.swift in Sources */,
+				CEFA38822755388B00C05C3B /* Window.Grid.Cell.swift in Sources */,
 				CEFA38762755355100C05C3B /* CollectionItem.swift in Sources */,
 				CEA79E1227541F9900397B5E /* Launch.Item.swift in Sources */,
-				CEFA38812755388B00C05C3B /* Window.Info.swift in Sources */,
+				CEFA38812755388B00C05C3B /* Window.Grid.Info.swift in Sources */,
 				CEF59ECC2752857400B40DFB /* Layer.swift in Sources */,
 				CEF59EC82752857400B40DFB /* Separator.swift in Sources */,
 				CEF59ECA2752857400B40DFB /* Vibrant.swift in Sources */,

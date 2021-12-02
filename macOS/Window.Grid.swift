@@ -3,7 +3,7 @@ import Combine
 import Core
 
 extension Window {
-    final class List: Collection<Cell, Info> {
+    final class Grid: Collection<Grid.Cell, Grid.Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         private let info = PassthroughSubject<[Info], Never>()
@@ -158,7 +158,7 @@ extension Window {
         @MainActor private func received(pictures: [Core.Picture]) async {
             var items = [Info]()
             for picture in pictures {
-                await items.append(.init(picture: picture, publisher: thumbnails.publisher(for: picture)))
+                await items.append(.init(picture: picture, thumbnail: thumbnails.publisher(for: picture)))
             }
             info.send(items)
         }

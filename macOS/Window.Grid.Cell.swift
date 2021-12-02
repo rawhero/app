@@ -1,7 +1,7 @@
 import AppKit
 import Combine
 
-extension Window {
+extension Window.Grid {
     final class Cell: CollectionCell<Info> {
         static let width = CGFloat(120)
         static let spacing = CGFloat(4)
@@ -41,7 +41,7 @@ extension Window {
                     image.contentsGravity = .center
                     sub = item
                         .info
-                        .publisher
+                        .thumbnail
                         .sink { [weak self] in
                             switch $0 {
                             case let .image(image):

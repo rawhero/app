@@ -48,7 +48,7 @@ final class Window: NSWindow, NSWindowDelegate {
         middle.material = .sheet
         content.addSubview(middle)
         
-        let list = List(pictures: sorted, selected: selected, clear: clear)
+        let list = Grid(pictures: sorted, selected: selected, clear: clear)
         middle.addSubview(list)
         
         separator.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
