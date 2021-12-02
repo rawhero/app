@@ -6,6 +6,7 @@ final class Window: NSWindow, NSWindowDelegate {
     private var subs = Set<AnyCancellable>()
     private let url: URL
     private let bookmark: Bookmark
+    private let zoom = CurrentValueSubject<Zoom, Never>(.grid)
     
     init(bookmark: Bookmark, url: URL) {
         self.bookmark = bookmark
@@ -18,7 +19,7 @@ final class Window: NSWindow, NSWindowDelegate {
                    styleMask: [.closable, .miniaturizable, .resizable, .titled, .fullSizeContentView],
                    backing: .buffered,
                    defer: false)
-        minSize = .init(width: 300, height: 400)
+        minSize = .init(width: 400, height: 400)
         toolbar = .init()
         animationBehavior = .documentWindow
         isReleasedWhenClosed = false
@@ -62,7 +63,7 @@ final class Window: NSWindow, NSWindowDelegate {
         let count = CurrentValueSubject<Int, Never>(0)
         
         let top = NSTitlebarAccessoryViewController()
-        top.view = Bar(url: url, count: count, sort: sort)
+        top.view = Bar(url: url, count: count, sort: sort, zoom: zoom)
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
         
@@ -114,6 +115,46 @@ final class Window: NSWindow, NSWindowDelegate {
                 count.send(photos.count)
             }
     }
+    
+//    override func keyDown(with: NSEvent) {
+//        print(with.keyCode)
+//        switch with.keyCode {
+//        case 123:
+//            //left
+//        case 124:
+//            //right
+//        case 125:
+//            //down
+//        case 126:
+//            //up
+//        default:
+//            super.keyDown(with: with)
+//        }
+//    }
+    
+    /*
+     func control(_ control: NSControl, textView: NSTextView, doCommandBy: Selector) -> Bool {
+         switch doCommandBy {
+         case #selector(cancelOperation), #selector(complete), #selector(NSSavePanel.cancel):
+             autocomplete?.close()
+             window?.makeFirstResponder(window?.contentView)
+         case #selector(insertNewline):
+             autocomplete?.close()
+             Task
+                 .detached(priority: .utility) { [weak self] in
+                     await self?.status.searching(search: control.stringValue)
+                 }
+             window!.makeFirstResponder(window!.contentView)
+         case #selector(moveUp):
+             autocomplete?.list.move.send((date: .init(), direction: .up))
+         case #selector(moveDown):
+             autocomplete?.list.move.send((date: .init(), direction: .down))
+         default:
+             return false
+         }
+         return true
+     }
+     */
     
     override func close() {
         Task {

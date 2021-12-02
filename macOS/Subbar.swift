@@ -67,7 +67,7 @@ final class Subbar: NSVisualEffectView {
                 case 0:
                     single.isHidden = true
                     multiple.isHidden = true
-                    clearing.state = .off
+                    clearing.state = .hidden
                     
                     name.stringValue = ""
                     date.attributedStringValue = .init()
