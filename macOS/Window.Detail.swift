@@ -17,15 +17,10 @@ extension Window {
             controller.view.autoresizingMask = [.width, .height]
             addSubview(controller.view)
             
-            let empty = Text(vibrancy: true)
-            empty.stringValue = "No photos found"
-            empty.textColor = .secondaryLabelColor
-            empty.font = .preferredFont(forTextStyle: .body)
-            
             info
                 .removeDuplicates()
                 .sink { [weak self] in
-                    self?.controller.arrangedObjects = $0.isEmpty ? [empty] : $0
+                    self?.controller.arrangedObjects = $0.isEmpty ? [0] : $0
                 }
                 .store(in: &subs)
         }
@@ -42,21 +37,11 @@ extension Window {
         }
         
         func pageController(_: NSPageController, prepare: NSViewController, with: Any?) {
-            prepare
-                .view
-                .subviews
-                .forEach {
-                    $0.removeFromSuperview()
-                }
-            
             switch with {
-            case let empty as Text:
-                prepare.view.addSubview(empty)
-                
-                empty.centerYAnchor.constraint(equalTo: prepare.view.centerYAnchor).isActive = true
-                empty.centerXAnchor.constraint(equalTo: prepare.view.centerXAnchor).isActive = true
+            case let info as Info:
+                (prepare.view as! Cell).info = info
             default:
-                (prepare.view as! Cell).info = with as? Info
+                (prepare.view as! Cell).info = nil
             }
         }
     }
