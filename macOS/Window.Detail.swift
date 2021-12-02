@@ -3,45 +3,61 @@ import Combine
 import Core
 
 extension Window {
-    final class Detail: Collection<Detail.Cell, Info> {
+    final class Detail: NSView, NSPageControllerDelegate {
+        private var subs = Set<AnyCancellable>()
+        private let controller = NSPageController()
+        
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>) {
-            super.init(active: .activeInKeyWindow)
+            super.init(frame: .zero)
+            translatesAutoresizingMaskIntoConstraints = false
+            controller.delegate = self
+            controller.transitionStyle = .horizontalStrip
+            controller.view = .init(frame: .zero)
+            controller.view.autoresizingMask = [.width, .height]
+            addSubview(controller.view)
             
-            let size = PassthroughSubject<CGSize, Never>()
-            
-            NotificationCenter
-                .default
-                .publisher(for: NSView.frameDidChangeNotification)
-                .compactMap {
-                    $0.object as? NSClipView
-                }
-                .filter { [weak self] in
-                    $0 == self?.contentView
-                }
-                .map {
-                    $0.bounds.size
-                }
-                .removeDuplicates()
-                .subscribe(size)
-                .store(in: &subs)
+            let empty = Text(vibrancy: true)
+            empty.stringValue = "No photos found"
+            empty.textColor = .secondaryLabelColor
+            empty.font = .preferredFont(forTextStyle: .body)
             
             info
                 .removeDuplicates()
-                .combineLatest(size)
-                .sink { [weak self] info, size in
-                    
-                    let result = info
-                        .reduce(into: (items: Set<CollectionItem<Info>>(), x: CGFloat())) {
-                                $0.items.insert(.init(
-                                    info: $1,
-                                    rect: .init(origin: .init(x: $0.x, y: 0), size: size)))
-                                $0.x += size.width
-                        }
-                    self?.items.send(result.items)
-                    self?.size.send(.init(width: result.x, height: size.height))
+                .sink { [weak self] in
+                    self?.controller.arrangedObjects = $0.isEmpty ? [empty] : $0
                 }
                 .store(in: &subs)
+        }
+        
+        func pageController(_: NSPageController, identifierFor: Any) -> NSPageController.ObjectIdentifier {
+            .init()
+        }
+        
+        func pageController(_: NSPageController, viewControllerForIdentifier: NSPageController.ObjectIdentifier) -> NSViewController {
+            let controller = NSViewController()
+            controller.view = Cell()
+            controller.view.autoresizingMask = [.width, .height]
+            return controller
+        }
+        
+        func pageController(_: NSPageController, prepare: NSViewController, with: Any?) {
+            prepare
+                .view
+                .subviews
+                .forEach {
+                    $0.removeFromSuperview()
+                }
+            
+            switch with {
+            case let empty as Text:
+                prepare.view.addSubview(empty)
+                
+                empty.centerYAnchor.constraint(equalTo: prepare.view.centerYAnchor).isActive = true
+                empty.centerXAnchor.constraint(equalTo: prepare.view.centerXAnchor).isActive = true
+            default:
+                (prepare.view as! Cell).info = with as? Info
+            }
         }
     }
 }
