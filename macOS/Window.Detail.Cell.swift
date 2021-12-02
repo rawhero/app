@@ -3,12 +3,7 @@ import Combine
 
 extension Window.Detail {
     final class Cell: CollectionCell<Window.Info> {
-        static let width = CGFloat(120)
-        static let spacing = CGFloat(4)
-        static let width_spacing = width + spacing
         private weak var image: CollectionImage!
-        private weak var margin: Shape!
-        private weak var gradient: Gradient!
         private var sub: AnyCancellable?
         
         override var item: CollectionItem<Window.Info>? {
@@ -21,16 +16,6 @@ extension Window.Detail {
                 if item.rect != oldValue?.rect {
                     frame = item.rect
                     image.frame.size = item.rect.size
-                    gradient.frame.size = item.rect.size
-                    
-                    margin.path = {
-                        $0.move(to: .zero)
-                        $0.addLine(to: .init(x: item.rect.size.width, y: 0))
-                        $0.addLine(to: .init(x: item.rect.size.width, y: item.rect.size.height))
-                        $0.addLine(to: .init(x: 0, y: item.rect.size.height))
-                        $0.closeSubpath()
-                        return $0
-                    } (CGMutablePath())
                 }
                 
                 if item.info != oldValue?.info {
@@ -63,34 +48,8 @@ extension Window.Detail {
             let image = CollectionImage()
             self.image = image
             
-            let gradient = Gradient()
-            gradient.startPoint = .init(x: 0.5, y: 0)
-            gradient.endPoint = .init(x: 0.5, y: 1)
-            gradient.locations = [0, 1]
-            gradient.colors = [NSColor.controlAccentColor.cgColor, NSColor.labelColor.cgColor]
-            self.gradient = gradient
-            
-            let margin = Shape()
-            margin.fillColor = .clear
-            margin.lineWidth = 3
-            self.margin = margin
-            
             super.init()
-            backgroundColor = NSColor.labelColor.withAlphaComponent(0.05).cgColor
             addSublayer(image)
-            addSublayer(gradient)
-            addSublayer(margin)
-        }
-        
-        override func update() {
-            switch state {
-            case .highlighted, .pressed:
-                margin.strokeColor = NSColor.controlAccentColor.cgColor
-                gradient.opacity = 0.25
-            default:
-                margin.strokeColor = .clear
-                gradient.opacity = 0
-            }
         }
     }
 }

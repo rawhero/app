@@ -26,7 +26,6 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
         verticalScroller!.controlSize = .mini
         contentView.postsBoundsChangedNotifications = true
         contentView.postsFrameChangedNotifications = true
-        drawsBackground = false
         addTrackingArea(.init(rect: .zero, options: [.mouseEnteredAndExited, .mouseMoved, active, .inVisibleRect], owner: self))
         
         let clip = PassthroughSubject<CGRect, Never>()

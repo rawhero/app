@@ -5,14 +5,12 @@ import Core
 extension Window {
     final class Grid: Collection<Grid.Cell, Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
-        private weak var info: PassthroughSubject<[Info], Never>!
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         
         required init?(coder: NSCoder) { nil }
-        init(info: PassthroughSubject<[Info], Never>,
+        init(info: CurrentValueSubject<[Info], Never>,
              selected: CurrentValueSubject<[Core.Picture], Never>,
              clear: PassthroughSubject<Void, Never>) {
-            self.info = info
             
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5

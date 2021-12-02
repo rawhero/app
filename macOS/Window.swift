@@ -6,7 +6,7 @@ final class Window: NSWindow, NSWindowDelegate {
     private var subs = Set<AnyCancellable>()
     private let url: URL
     private let bookmark: Bookmark
-    private let zoom = CurrentValueSubject<Zoom, Never>(.grid)
+    private let zoom = CurrentValueSubject<Zoom, Never>(.detail)
     
     init(bookmark: Bookmark, url: URL) {
         self.bookmark = bookmark
@@ -33,7 +33,8 @@ final class Window: NSWindow, NSWindowDelegate {
         let clear = PassthroughSubject<Void, Never>()
         let sort = CurrentValueSubject<Sort, Never>(.name)
         let selected = CurrentValueSubject<[Core.Picture], Never>([])
-        let info = PassthroughSubject<[Info], Never>()
+        let info = CurrentValueSubject<[Info], Never>([])
+        let count = CurrentValueSubject<Int, Never>(0)
         let thumbnails = Camera(strategy: .thumbnail)
         
         let content = NSVisualEffectView()
@@ -43,26 +44,6 @@ final class Window: NSWindow, NSWindowDelegate {
         
         let separator = Separator(mode: .horizontal)
         content.addSubview(separator)
-        
-        let middle = NSVisualEffectView()
-        middle.translatesAutoresizingMaskIntoConstraints = false
-        middle.state = .active
-        middle.material = .sheet
-        content.addSubview(middle)
-        
-        let list = Grid(info: info, selected: selected, clear: clear)
-        middle.addSubview(list)
-        
-        separator.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
-        separator.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
-        separator.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
-        
-        middle.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
-        middle.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        middle.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
-        middle.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
-        
-        let count = CurrentValueSubject<Int, Never>(0)
         
         let top = NSTitlebarAccessoryViewController()
         top.view = Bar(url: url, count: count, sort: sort, zoom: zoom)
@@ -75,10 +56,9 @@ final class Window: NSWindow, NSWindowDelegate {
         bottom.view.frame.size.height = 50
         addTitlebarAccessoryViewController(bottom)
         
-        list.topAnchor.constraint(equalTo: middle.topAnchor).isActive = true
-        list.bottomAnchor.constraint(equalTo: middle.bottomAnchor).isActive = true
-        list.leftAnchor.constraint(equalTo: middle.leftAnchor).isActive = true
-        list.rightAnchor.constraint(equalTo: middle.rightAnchor).isActive = true
+        separator.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
+        separator.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+        separator.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
         
         sorted
             .sink { pictures in
@@ -119,6 +99,36 @@ final class Window: NSWindow, NSWindowDelegate {
         clear
             .sink {
                 selected.value = []
+            }
+            .store(in: &subs)
+        
+        zoom
+            .removeDuplicates()
+            .sink {
+                content
+                    .subviews
+                    .filter {
+                        $0 != separator
+                    }
+                    .forEach {
+                        $0.removeFromSuperview()
+                    }
+                
+                let view: NSView
+                
+                switch $0 {
+                case .grid:
+                    view = Grid(info: info, selected: selected, clear: clear)
+                case .detail:
+                    view = Detail(info: info)
+                }
+                
+                content.addSubview(view)
+                
+                view.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
+                view.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
+                view.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+                view.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
             }
             .store(in: &subs)
         
