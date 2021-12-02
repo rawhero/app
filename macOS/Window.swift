@@ -33,6 +33,8 @@ final class Window: NSWindow, NSWindowDelegate {
         let clear = PassthroughSubject<Void, Never>()
         let sort = CurrentValueSubject<Sort, Never>(.name)
         let selected = CurrentValueSubject<[Core.Picture], Never>([])
+        let info = PassthroughSubject<[Info], Never>()
+        let thumbnails = Camera(strategy: .thumbnail)
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -48,7 +50,7 @@ final class Window: NSWindow, NSWindowDelegate {
         middle.material = .sheet
         content.addSubview(middle)
         
-        let list = Grid(pictures: sorted, selected: selected, clear: clear)
+        let list = Grid(info: info, selected: selected, clear: clear)
         middle.addSubview(list)
         
         separator.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -77,6 +79,18 @@ final class Window: NSWindow, NSWindowDelegate {
         list.bottomAnchor.constraint(equalTo: middle.bottomAnchor).isActive = true
         list.leftAnchor.constraint(equalTo: middle.leftAnchor).isActive = true
         list.rightAnchor.constraint(equalTo: middle.rightAnchor).isActive = true
+        
+        sorted
+            .sink { pictures in
+                Task {
+                    var items = [Info]()
+                    for picture in pictures {
+                        await items.append(.init(picture: picture, thumbnail: thumbnails.publisher(for: picture)))
+                    }
+                    info.send(items)
+                }
+            }
+            .store(in: &subs)
         
         pictures
             .combineLatest(sort)

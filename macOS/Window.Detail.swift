@@ -3,16 +3,16 @@ import Combine
 import Core
 
 extension Window {
-    final class Grid: Collection<Grid.Cell, Info> {
+    final class Detail: Collection<Detail.Cell, Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
-        private weak var info: PassthroughSubject<[Info], Never>!
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
+        private let info = PassthroughSubject<[Info], Never>()
+        private let thumbnails = Camera(strategy: .thumbnail)
         
         required init?(coder: NSCoder) { nil }
-        init(info: PassthroughSubject<[Info], Never>,
+        init(pictures: PassthroughSubject<[Core.Picture], Never>,
              selected: CurrentValueSubject<[Core.Picture], Never>,
              clear: PassthroughSubject<Void, Never>) {
-            self.info = info
             
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
@@ -130,6 +130,14 @@ extension Window {
                 }
                 .store(in: &subs)
             
+            pictures
+                .sink { pictures in
+                    Task { [weak self] in
+                        await self?.received(pictures: pictures)
+                    }
+                }
+                .store(in: &subs)
+            
             clear
                 .sink { [weak self] in
                     self?.clear.send()
@@ -145,6 +153,14 @@ extension Window {
                 click.send((point: point(with: with), multiple: with.modifierFlags.contains(.shift)
                             || with.modifierFlags.contains(.command)))
             }
+        }
+        
+        @MainActor private func received(pictures: [Core.Picture]) async {
+            var items = [Info]()
+            for picture in pictures {
+                await items.append(.init(picture: picture, thumbnail: thumbnails.publisher(for: picture)))
+            }
+            info.send(items)
         }
     }
 }

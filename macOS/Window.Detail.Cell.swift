@@ -1,7 +1,7 @@
 import AppKit
 import Combine
 
-extension Window.Grid {
+extension Window.Detail {
     final class Cell: CollectionCell<Window.Info> {
         static let width = CGFloat(120)
         static let spacing = CGFloat(4)
