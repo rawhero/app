@@ -52,7 +52,7 @@ final class Window: NSWindow, NSWindowDelegate {
         addTitlebarAccessoryViewController(top)
         
         let bottom = NSTitlebarAccessoryViewController()
-        bottom.view = Subbar(selected: selected, clear: clear)
+        bottom.view = Subbar(selected: selected, zoom: zoom, clear: clear)
         bottom.layoutAttribute = .bottom
         bottom.view.frame.size.height = 50
         addTitlebarAccessoryViewController(bottom)
@@ -124,7 +124,7 @@ final class Window: NSWindow, NSWindowDelegate {
                 case .grid:
                     view = Grid(info: info, selected: selected, clear: clear)
                 case .detail:
-                    view = Detail(info: info)
+                    view = Detail(info: info, selected: selected)
                 }
                 
                 content.addSubview(view)

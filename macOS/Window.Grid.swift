@@ -15,6 +15,9 @@ extension Window {
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
             scrollerInsets.bottom = 5
+            self.selected = .init(selected
+                                    .value
+                                    .map(\.id.absoluteString))
             
             let columns = PassthroughSubject<(width: CGFloat, count: Int), Never>()
             
@@ -40,6 +43,27 @@ extension Window {
                     before.width == current.width && before.count == current.count
                 }
                 .subscribe(columns)
+                .store(in: &subs)
+            
+            items
+                .combineLatest(selected)
+                .first()
+                .filter {
+                    !$1.isEmpty
+                }
+                .compactMap { items, selected in
+                    if let selected = selected.first {
+                        return items
+                            .first {
+                                $0.info.picture.id == selected.id
+                            }
+                    }
+                    return nil
+                }
+                .sink { [weak self] (item: CollectionItem<Info>) in
+                    guard let midY = self?.bounds.midY else { return }
+                    self?.contentView.bounds.origin.y = item.rect.midY - midY
+                }
                 .store(in: &subs)
             
             info
@@ -70,8 +94,8 @@ extension Window {
                                     $0.index = 0
                                 }
                         }
-                    self?.items.send(result.items)
                     self?.size.send(.init(width: 0, height: result.y.max() ?? 0))
+                    self?.items.send(result.items)
                 }
                 .store(in: &subs)
             

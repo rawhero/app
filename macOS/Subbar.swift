@@ -6,7 +6,10 @@ final class Subbar: NSVisualEffectView {
     private var subs = Set<AnyCancellable>()
     
     required init?(coder: NSCoder) { nil }
-    init(selected: CurrentValueSubject<[Core.Picture], Never>, clear: PassthroughSubject<Void, Never>) {
+    init(selected: CurrentValueSubject<[Core.Picture], Never>,
+         zoom: CurrentValueSubject<Window.Zoom, Never>,
+         clear: PassthroughSubject<Void, Never>) {
+        
         super.init(frame: .zero)
         state = .active
         material = .menu
@@ -62,7 +65,9 @@ final class Subbar: NSVisualEffectView {
         
         selected
             .removeDuplicates()
-            .sink { selected in
+            .combineLatest(zoom
+                            .removeDuplicates())
+            .sink { selected, zoom in
                 switch selected.count {
                 case 0:
                     single.isHidden = true
@@ -133,7 +138,7 @@ final class Subbar: NSVisualEffectView {
                     
                     single.isHidden = false
                     multiple.isHidden = true
-                    clearing.state = .on
+                    clearing.state = zoom == .grid ? .on : .hidden
                     
                     count.attributedStringValue = .init()
                 default:
@@ -150,7 +155,7 @@ final class Subbar: NSVisualEffectView {
                     
                     single.isHidden = true
                     multiple.isHidden = false
-                    clearing.state = .on
+                    clearing.state = zoom == .grid ? .on : .hidden
                     
                     name.stringValue = ""
                     date.attributedStringValue = .init()

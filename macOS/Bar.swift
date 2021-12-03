@@ -42,7 +42,6 @@ final class Bar: NSVisualEffectView {
             zooming.translatesAutoresizingMaskIntoConstraints = false
             zooming.segmentDistribution = .fit
             zooming.segmentStyle = .rounded
-            zooming.selectedSegment = 0
             
             let left = NSStackView(views: [title, sorting, zooming])
             left.translatesAutoresizingMaskIntoConstraints = false
@@ -70,6 +69,12 @@ final class Bar: NSVisualEffectView {
                                 .foregroundColor: NSColor.secondaryLabelColor]))
                         }
                     }
+                }
+                .store(in: &subs)
+            
+            zoom
+                .sink {
+                    zooming.selectedSegment = $0.rawValue
                 }
                 .store(in: &subs)
         }
