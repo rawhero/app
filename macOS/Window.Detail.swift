@@ -14,34 +14,56 @@ extension Window {
             controller.delegate = self
             controller.transitionStyle = .horizontalStrip
             controller.view = .init(frame: .zero)
-            controller.view.autoresizingMask = [.width, .height]
+            controller.view.translatesAutoresizingMaskIntoConstraints = false
             addSubview(controller.view)
+            
+            controller.view.topAnchor.constraint(equalTo: topAnchor).isActive = true
+            controller.view.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+            controller.view.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+            controller.view.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
             
             info
                 .removeDuplicates()
                 .sink { [weak self] in
-                    self?.controller.arrangedObjects = $0.isEmpty ? [0] : $0
+                    self?.controller.arrangedObjects = $0.isEmpty ? [""] : $0
                 }
                 .store(in: &subs)
         }
         
         func pageController(_: NSPageController, identifierFor: Any) -> NSPageController.ObjectIdentifier {
-            .init()
+            switch identifierFor {
+            case let info as Info:
+                return info.id
+            default:
+                return identifierFor as! String
+            }
         }
         
         func pageController(_: NSPageController, viewControllerForIdentifier: NSPageController.ObjectIdentifier) -> NSViewController {
             let controller = NSViewController()
-            controller.view = Cell()
+            controller.view = viewControllerForIdentifier.isEmpty ? Empty() : Cell()
             controller.view.autoresizingMask = [.width, .height]
             return controller
         }
         
         func pageController(_: NSPageController, prepare: NSViewController, with: Any?) {
-            switch with {
-            case let info as Info:
+            if let info = with as? Info {
                 (prepare.view as! Cell).info = info
-            default:
-                (prepare.view as! Cell).info = nil
+            }
+        }
+        
+        override var frame: NSRect {
+            didSet {
+                controller
+                    .view
+                    .subviews
+                    .forEach {
+                        $0
+                            .subviews
+                            .forEach {
+                                $0.frame.size = frame.size
+                            }
+                    }
             }
         }
     }
