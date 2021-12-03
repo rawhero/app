@@ -9,10 +9,12 @@ extension Window {
         
         let picture: Picture
         let thumbnail: Camera.Pub
+        let hd: Camera.Pub
         
-        init(picture: Core.Picture, thumbnail: Camera.Pub) {
+        init(picture: Core.Picture, thumbnail: Camera.Pub, hd: Camera.Pub) {
             self.picture = picture
             self.thumbnail = thumbnail
+            self.hd = hd
         }
         
         func height(for width: CGFloat) -> CGFloat {

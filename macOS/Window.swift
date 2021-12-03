@@ -36,6 +36,7 @@ final class Window: NSWindow, NSWindowDelegate {
         let info = CurrentValueSubject<[Info], Never>([])
         let count = CurrentValueSubject<Int, Never>(0)
         let thumbnails = Camera(strategy: .thumbnail)
+        let hd = Camera(strategy: .hd)
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -65,7 +66,10 @@ final class Window: NSWindow, NSWindowDelegate {
                 Task {
                     var items = [Info]()
                     for picture in pictures {
-                        await items.append(.init(picture: picture, thumbnail: thumbnails.publisher(for: picture)))
+                        await items.append(.init(
+                            picture: picture,
+                            thumbnail: thumbnails.publisher(for: picture),
+                            hd: hd.publisher(for: picture)))
                     }
                     info.send(items)
                 }

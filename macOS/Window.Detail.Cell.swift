@@ -10,10 +10,15 @@ extension Window.Detail {
             didSet {
                 guard let info = info else { return }
                 sub = info
-                    .thumbnail
+                    .hd
                     .sink { [weak self] in
                         switch $0 {
                         case let .image(image):
+                            let transition = CATransition()
+                            transition.timingFunction = .init(name: .easeInEaseOut)
+                            transition.type = .fade
+                            transition.duration = 0.5
+                            self?.image.add(transition, forKey: "transition")
                             self?.image.contents = image
                             self?.image.contentsGravity = .resizeAspect
                         case .error:
@@ -27,6 +32,12 @@ extension Window.Detail {
             }
         }
         
+        override var frame: NSRect {
+            didSet {
+                image.frame.size = frame.size
+            }
+        }
+        
         required init?(coder: NSCoder) { nil }
         required init() {
             let image = CollectionImage()
@@ -34,11 +45,14 @@ extension Window.Detail {
                 .withSymbolConfiguration(.init(pointSize: 25, weight: .light)
                                             .applying(.init(hierarchicalColor: .quaternaryLabelColor)))
             image.contentsGravity = .center
+            
             self.image = image
             
             super.init(frame: .zero)
-            layer = image
+            layer = Layer()
             wantsLayer = true
+            layer!.backgroundColor = NSColor.controlBackgroundColor.cgColor
+            layer!.addSublayer(image)
         }
     }
 }
