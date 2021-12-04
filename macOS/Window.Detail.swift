@@ -5,14 +5,18 @@ import Core
 extension Window {
     final class Detail: NSView, NSPageControllerDelegate {
         private weak var selected: CurrentValueSubject<[Core.Picture], Never>!
+        private weak var zoom: CurrentValueSubject<Zoom, Never>!
         private var subs = Set<AnyCancellable>()
         private let controller = NSPageController()
         
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>,
-             selected: CurrentValueSubject<[Core.Picture], Never>) {
+             selected: CurrentValueSubject<[Core.Picture], Never>,
+             zoom: CurrentValueSubject<Zoom, Never>) {
             
             self.selected = selected
+            self.zoom = zoom
+            
             super.init(frame: .zero)
             translatesAutoresizingMaskIntoConstraints = false
             controller.delegate = self
@@ -81,6 +85,15 @@ extension Window {
                                 $0.frame.size = frame.size
                             }
                     }
+            }
+        }
+        
+        override func mouseUp(with: NSEvent) {
+            switch with.clickCount {
+            case 2:
+                zoom.send(.grid)
+            default:
+                super.mouseUp(with: with)
             }
         }
     }

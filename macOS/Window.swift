@@ -6,7 +6,6 @@ final class Window: NSWindow, NSWindowDelegate {
     private var subs = Set<AnyCancellable>()
     private let url: URL
     private let bookmark: Bookmark
-    private let zoom = CurrentValueSubject<Zoom, Never>(.detail)
     
     init(bookmark: Bookmark, url: URL) {
         self.bookmark = bookmark
@@ -37,6 +36,7 @@ final class Window: NSWindow, NSWindowDelegate {
         let count = CurrentValueSubject<Int, Never>(0)
         let thumbnails = Camera(strategy: .thumbnail)
         let hd = Camera(strategy: .hd)
+        let zoom = CurrentValueSubject<Zoom, Never>(.grid)
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -122,9 +122,9 @@ final class Window: NSWindow, NSWindowDelegate {
                 
                 switch $0 {
                 case .grid:
-                    view = Grid(info: info, selected: selected, clear: clear)
+                    view = Grid(info: info, selected: selected, clear: clear, zoom: zoom)
                 case .detail:
-                    view = Detail(info: info, selected: selected)
+                    view = Detail(info: info, selected: selected, zoom: zoom)
                 }
                 
                 content.addSubview(view)

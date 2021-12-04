@@ -6,11 +6,13 @@ extension Window {
     final class Grid: Collection<Grid.Cell, Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
+        private let double = PassthroughSubject<CGPoint, Never>()
         
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>,
              selected: CurrentValueSubject<[Core.Picture], Never>,
-             clear: PassthroughSubject<Void, Never>) {
+             clear: PassthroughSubject<Void, Never>,
+             zoom: CurrentValueSubject<Zoom, Never>) {
             
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
@@ -152,6 +154,28 @@ extension Window {
                 }
                 .store(in: &subs)
             
+            double
+                .compactMap { [weak self] point in
+                    self?
+                        .cells
+                        .first {
+                            $0
+                                .item
+                                .map {
+                                    $0
+                                        .rect
+                                        .contains(point)
+                                }
+                            ?? false
+                        }
+                }
+                .sink {
+                    guard let info = $0.item?.info else { return }
+                    selected.value = [info.picture]
+                    zoom.send(.detail)
+                }
+                .store(in: &subs)
+            
             clear
                 .sink { [weak self] in
                     self?.clear.send()
@@ -162,7 +186,7 @@ extension Window {
         override func mouseUp(with: NSEvent) {
             switch with.clickCount {
             case 2:
-                break
+                double.send(point(with: with))
             default:
                 click.send((point: point(with: with), multiple: with.modifierFlags.contains(.shift)
                             || with.modifierFlags.contains(.command)))
