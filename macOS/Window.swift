@@ -3,6 +3,7 @@ import Combine
 import Core
 
 final class Window: NSWindow, NSWindowDelegate {
+    private weak var present: NSView?
     private var subs = Set<AnyCancellable>()
     private let url: URL
     private let bookmark: Bookmark
@@ -37,6 +38,7 @@ final class Window: NSWindow, NSWindowDelegate {
         let thumbnails = Camera(strategy: .thumbnail)
         let hd = Camera(strategy: .hd)
         let zoom = CurrentValueSubject<Zoom, Never>(.grid)
+        let animateOut = PassthroughSubject<Void, Never>()
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -108,25 +110,23 @@ final class Window: NSWindow, NSWindowDelegate {
         
         zoom
             .removeDuplicates()
-            .sink {
-                content
-                    .subviews
-                    .filter {
-                        $0 != separator
-                    }
-                    .forEach {
-                        $0.removeFromSuperview()
-                    }
-                
+            .sink { [weak self] new in
                 let view: NSView
                 
-                switch $0 {
+                switch new {
                 case .grid:
-                    view = Grid(info: info, selected: selected, clear: clear, zoom: zoom)
+                    view = Grid(info: info, selected: selected, clear: clear, zoom: zoom, animateOut: animateOut)
+                    self?.present?.removeFromSuperview()
                 case .detail:
                     view = Detail(info: info, selected: selected, zoom: zoom)
+                    
+                    if self?.present != nil {
+                        view.isHidden = true
+                        animateOut.send()
+                    }
                 }
                 
+                self?.present = view
                 content.addSubview(view)
                 
                 view.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
@@ -142,6 +142,10 @@ final class Window: NSWindow, NSWindowDelegate {
                 pictures.send(photos)
                 count.send(photos.count)
             }
+    }
+    
+    func animatedOut() {
+        present?.isHidden = false
     }
     
 //    override func keyDown(with: NSEvent) {

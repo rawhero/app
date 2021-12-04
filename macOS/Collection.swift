@@ -86,6 +86,7 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
                     }
                 
                 self?.render.send()
+                print("render \(visible.count)")
             }
             .store(in: &subs)
         

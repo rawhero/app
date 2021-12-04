@@ -3,7 +3,7 @@ import Combine
 import Core
 
 extension Window {
-    final class Grid: Collection<Grid.Cell, Info> {
+    final class Grid: Collection<Grid.Cell, Info>, CAAnimationDelegate {
         private static let insets2 = Cell.spacing + Cell.spacing
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         private let double = PassthroughSubject<CGPoint, Never>()
@@ -12,7 +12,8 @@ extension Window {
         init(info: CurrentValueSubject<[Info], Never>,
              selected: CurrentValueSubject<[Core.Picture], Never>,
              clear: PassthroughSubject<Void, Never>,
-             zoom: CurrentValueSubject<Zoom, Never>) {
+             zoom: CurrentValueSubject<Zoom, Never>,
+             animateOut: PassthroughSubject<Void, Never>) {
             
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
@@ -64,7 +65,8 @@ extension Window {
                 }
                 .sink { [weak self] (item: CollectionItem<Info>) in
                     guard let midY = self?.bounds.midY else { return }
-                    self?.contentView.bounds.origin.y = item.rect.midY - midY
+                    print("scroll \(item.rect.midY - midY)")
+                    self?.contentView.bounds.origin.y = max(item.rect.midY - midY, 0)
                 }
                 .store(in: &subs)
             
@@ -97,6 +99,9 @@ extension Window {
                                 }
                         }
                     self?.size.send(.init(width: 0, height: result.y.max() ?? 0))
+                    
+                    
+                    
                     self?.items.send(result.items)
                 }
                 .store(in: &subs)
@@ -176,6 +181,43 @@ extension Window {
                 }
                 .store(in: &subs)
             
+            animateOut
+                .sink { [weak self] in
+                    guard
+                        let bounds = self?.bounds,
+                        let offset = self?.contentView.bounds.origin.y,
+                        let id = selected.value.first?.id ?? info.value.first?.picture.id,
+                        let cell = self?
+                            .cells
+                            .first(where: {
+                                $0
+                                    .item
+                                    .map { $0.info.picture.id == id }
+                                ?? false
+                            })
+                    else {
+                        self?.animatedOut()
+                        return
+                    }
+                    cell.image.removeFromSuperlayer()
+                    cell.image.contentsGravity = .resizeAspect
+                    cell.image.backgroundColor = NSColor.controlBackgroundColor.cgColor
+                    self?.documentView?.layer?.addSublayer(cell.image)
+                    
+                    ["bounds", "position"]
+                        .forEach {
+                            let transition = CABasicAnimation(keyPath: $0)
+                            transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width / 2, dy: cell.frame.height / 2)
+                            transition.duration = 0.35
+                            transition.timingFunction = .init(name: .easeInEaseOut)
+                            transition.delegate = self
+                            cell.image.add(transition, forKey: $0)
+                        }
+
+                    cell.image.frame = .init(x: 0, y: offset, width: bounds.width, height: bounds.height)
+                }
+                .store(in: &subs)
+            
             clear
                 .sink { [weak self] in
                     self?.clear.send()
@@ -191,6 +233,17 @@ extension Window {
                 click.send((point: point(with: with), multiple: with.modifierFlags.contains(.shift)
                             || with.modifierFlags.contains(.command)))
             }
+        }
+        
+        func animationDidStop(_: CAAnimation, finished: Bool) {
+            if finished {
+                animatedOut()
+            }
+        }
+        
+        private func animatedOut() {
+            (window as? Window)?.animatedOut()
+            removeFromSuperview()
         }
     }
 }

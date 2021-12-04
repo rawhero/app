@@ -38,8 +38,6 @@ extension Window {
                     if let first = selected.value.first,
                        let index = $0.firstIndex(where: { $0.id == first.id.absoluteString }) {
                         self?.controller.selectedIndex = index
-                    } else if let first = $0.first {
-                        selected.send([first.picture])
                     }
                 }
                 .store(in: &subs)

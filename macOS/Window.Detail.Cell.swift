@@ -2,7 +2,7 @@ import AppKit
 import Combine
 
 extension Window.Detail {
-    final class Cell: NSView {
+    final class Cell: NSView {        
         private weak var image: CollectionImage!
         private var sub: AnyCancellable?
         
@@ -14,14 +14,9 @@ extension Window.Detail {
                     .sink { [weak self] in
                         switch $0 {
                         case let .image(image):
-                            let transition = CATransition()
-                            transition.timingFunction = .init(name: .easeInEaseOut)
-                            transition.type = .fade
-                            transition.duration = 0.5
-                            self?.image.add(transition, forKey: "transition")
                             self?.image.contents = image
-                            self?.image.contentsGravity = .resizeAspect
                         case .error:
+                            self?.image.contentsGravity = .center
                             self?.image.contents = NSImage(
                                 systemSymbolName: "exclamationmark.triangle.fill",
                                 accessibilityDescription: nil)?
@@ -41,11 +36,7 @@ extension Window.Detail {
         required init?(coder: NSCoder) { nil }
         required init() {
             let image = CollectionImage()
-            image.contents = NSImage(systemSymbolName: "photo.circle.fill", accessibilityDescription: nil)?
-                .withSymbolConfiguration(.init(pointSize: 25, weight: .light)
-                                            .applying(.init(hierarchicalColor: .quaternaryLabelColor)))
-            image.contentsGravity = .center
-            
+            image.contentsGravity = .resizeAspect
             self.image = image
             
             super.init(frame: .zero)
