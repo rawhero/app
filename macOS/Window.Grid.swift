@@ -48,28 +48,6 @@ extension Window {
                 .subscribe(columns)
                 .store(in: &subs)
             
-            items
-                .combineLatest(selected)
-                .first()
-                .filter {
-                    !$1.isEmpty
-                }
-                .compactMap { items, selected in
-                    if let selected = selected.first {
-                        return items
-                            .first {
-                                $0.info.picture.id == selected.id
-                            }
-                    }
-                    return nil
-                }
-                .sink { [weak self] (item: CollectionItem<Info>) in
-                    guard let midY = self?.bounds.midY else { return }
-                    print("scroll \(item.rect.midY - midY)")
-                    self?.contentView.bounds.origin.y = max(item.rect.midY - midY, 0)
-                }
-                .store(in: &subs)
-            
             info
                 .removeDuplicates()
                 .combineLatest(columns)
@@ -100,8 +78,13 @@ extension Window {
                         }
                     self?.size.send(.init(width: 0, height: result.y.max() ?? 0))
                     
-                    
-                    
+                    if let selected = selected.value.first,
+                       let item = result.items.first(where: { $0.info.picture.id == selected.id}),
+                       let midY = self?.bounds.midY {
+                        
+                        print("scroll \(item.rect.midY - midY)")
+                        self?.contentView.bounds.origin.y = max(item.rect.midY - midY, 0)
+                    }
                     self?.items.send(result.items)
                 }
                 .store(in: &subs)

@@ -47,6 +47,7 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
                         clip.intersects($0.rect)
                     }
             }
+            .removeDuplicates()
             .sink { [weak self] visible in
                 guard let selected = self?.selected else { return }
                 
