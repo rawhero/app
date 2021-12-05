@@ -32,14 +32,14 @@ final class Export: NSPanel {
         contentView!.addSubview(blur)
         
         let title = Text(vibrancy: true)
-        title.stringValue = "Edit"
+        title.stringValue = "Export"
         title.font = .preferredFont(forTextStyle: .title3)
-        title.textColor = .tertiaryLabelColor
+        title.textColor = .secondaryLabelColor
         blur.addSubview(title)
         
-        let save = Action(title: "Save", color: .systemBlue)
-        blur.addSubview(save)
-        save
+        let export = Action(title: "Export", color: .systemBlue)
+        blur.addSubview(export)
+        export
             .click
             .sink { [weak self] in
 //                self?.save()
@@ -55,19 +55,65 @@ final class Export: NSPanel {
             .store(in: &subs)
         blur.addSubview(cancel)
         
+        let top = Separator(mode: .horizontal)
+        blur.addSubview(top)
+        
+        let bottom = Separator(mode: .horizontal)
+        blur.addSubview(bottom)
+        
+        let flip = Flip()
+        flip.translatesAutoresizingMaskIntoConstraints = false
+        
+        let scroll = NSScrollView()
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.documentView = flip
+        scroll.hasVerticalScroller = true
+        scroll.verticalScroller!.controlSize = .mini
+        scroll.drawsBackground = false
+        scroll.automaticallyAdjustsContentInsets = false
+        blur.addSubview(scroll)
+        
+        let stack = NSStackView(views: items.map(Item.init(picture:)))
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.orientation = .vertical
+        stack.spacing = 10
+        flip.addSubview(stack)
+        
         blur.topAnchor.constraint(equalTo: contentView!.topAnchor).isActive = true
         blur.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor).isActive = true
         blur.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
         blur.rightAnchor.constraint(equalTo: contentView!.rightAnchor).isActive = true
         
-        title.centerYAnchor.constraint(equalTo: blur.topAnchor, constant: 26).isActive = true
-        title.leftAnchor.constraint(equalTo: blur.leftAnchor, constant: 20).isActive = true
+        title.topAnchor.constraint(equalTo: blur.topAnchor, constant: 20).isActive = true
+        title.centerXAnchor.constraint(equalTo: blur.centerXAnchor).isActive = true
         
-        save.rightAnchor.constraint(equalTo: blur.rightAnchor, constant: -13).isActive = true
-        save.centerYAnchor.constraint(equalTo: blur.topAnchor, constant: 26).isActive = true
+        export.centerXAnchor.constraint(equalTo: blur.centerXAnchor).isActive = true
+        export.bottomAnchor.constraint(equalTo: cancel.topAnchor).isActive = true
         
-        cancel.rightAnchor.constraint(equalTo: save.leftAnchor, constant: -10).isActive = true
-        cancel.centerYAnchor.constraint(equalTo: blur.topAnchor, constant: 26).isActive = true
+        cancel.centerXAnchor.constraint(equalTo: blur.centerXAnchor).isActive = true
+        cancel.bottomAnchor.constraint(equalTo: blur.bottomAnchor, constant: -35).isActive = true
+        
+        top.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10).isActive = true
+        top.leftAnchor.constraint(equalTo: blur.leftAnchor).isActive = true
+        top.rightAnchor.constraint(equalTo: blur.rightAnchor).isActive = true
+        
+        bottom.bottomAnchor.constraint(equalTo: export.topAnchor, constant: -15).isActive = true
+        bottom.leftAnchor.constraint(equalTo: blur.leftAnchor).isActive = true
+        bottom.rightAnchor.constraint(equalTo: blur.rightAnchor).isActive = true
+        
+        scroll.topAnchor.constraint(equalTo: top.bottomAnchor).isActive = true
+        scroll.leftAnchor.constraint(equalTo: blur.leftAnchor).isActive = true
+        scroll.rightAnchor.constraint(equalTo: blur.rightAnchor).isActive = true
+        scroll.bottomAnchor.constraint(equalTo: bottom.topAnchor).isActive = true
+        
+        flip.topAnchor.constraint(equalTo: scroll.topAnchor).isActive = true
+        flip.leftAnchor.constraint(equalTo: scroll.leftAnchor).isActive = true
+        flip.rightAnchor.constraint(equalTo: scroll.rightAnchor).isActive = true
+        flip.bottomAnchor.constraint(equalTo: stack.bottomAnchor, constant: 10).isActive = true
+        
+        stack.topAnchor.constraint(equalTo: flip.topAnchor, constant: 10).isActive = true
+        stack.leftAnchor.constraint(equalTo: flip.leftAnchor).isActive = true
+        stack.rightAnchor.constraint(equalTo: flip.rightAnchor).isActive = true
         
         monitor = NSEvent
             .addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .otherMouseDown]) { [weak self] event in
