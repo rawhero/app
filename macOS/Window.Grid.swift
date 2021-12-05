@@ -137,6 +137,7 @@ extension Window {
                                     .asyncAfter(deadline: .now() + .milliseconds(400)) {
                                         cell.gradient.isHidden = false
                                         cell.margin.isHidden = false
+                                        cell.backgroundColor = NSColor.labelColor.withAlphaComponent(0.05).cgColor
                                     }
                             }
                     }

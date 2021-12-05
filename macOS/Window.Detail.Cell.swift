@@ -29,6 +29,7 @@ extension Window.Detail {
                                 accessibilityDescription: nil)?
                                 .withSymbolConfiguration(.init(pointSize: 20, weight: .light)
                                                             .applying(.init(hierarchicalColor: .systemPink)))
+                            self?.image.contentsGravity = .center
                         }
                     }
             }
