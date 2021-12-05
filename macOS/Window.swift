@@ -159,47 +159,10 @@ final class Window: NSWindow, NSWindowDelegate {
             default:
                 super.keyDown(with: with)
             }
-        case let grid as Grid:
-            switch with.keyCode {
-//            case 123:
-//                //left
-//            case 124:
-//                //right
-//            case 125:
-//                //down
-//            case 126:
-//                //up
-            default:
-                super.keyDown(with: with)
-            }
         default:
             super.keyDown(with: with)
         }
     }
-    
-    /*
-     func control(_ control: NSControl, textView: NSTextView, doCommandBy: Selector) -> Bool {
-         switch doCommandBy {
-         case #selector(cancelOperation), #selector(complete), #selector(NSSavePanel.cancel):
-             autocomplete?.close()
-             window?.makeFirstResponder(window?.contentView)
-         case #selector(insertNewline):
-             autocomplete?.close()
-             Task
-                 .detached(priority: .utility) { [weak self] in
-                     await self?.status.searching(search: control.stringValue)
-                 }
-             window!.makeFirstResponder(window!.contentView)
-         case #selector(moveUp):
-             autocomplete?.list.move.send((date: .init(), direction: .up))
-         case #selector(moveDown):
-             autocomplete?.list.move.send((date: .init(), direction: .down))
-         default:
-             return false
-         }
-         return true
-     }
-     */
     
     override func close() {
         Task {
