@@ -4,10 +4,10 @@ import Core
 
 extension Window {
     final class Detail: NSView, NSPageControllerDelegate {
+        let controller = NSPageController()
         private weak var selected: CurrentValueSubject<[Core.Picture], Never>!
         private weak var zoom: CurrentValueSubject<Zoom, Never>!
         private var subs = Set<AnyCancellable>()
-        private let controller = NSPageController()
         
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>,

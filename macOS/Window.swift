@@ -148,21 +148,34 @@ final class Window: NSWindow, NSWindowDelegate {
         present?.isHidden = false
     }
     
-//    override func keyDown(with: NSEvent) {
-//        print(with.keyCode)
-//        switch with.keyCode {
-//        case 123:
-//            //left
-//        case 124:
-//            //right
-//        case 125:
-//            //down
-//        case 126:
-//            //up
-//        default:
-//            super.keyDown(with: with)
-//        }
-//    }
+    override func keyDown(with: NSEvent) {
+        switch present {
+        case let detail as Detail:
+            switch with.keyCode {
+            case 123:
+                detail.controller.navigateBack(nil)
+            case 124:
+                detail.controller.navigateForward(nil)
+            default:
+                super.keyDown(with: with)
+            }
+        case let grid as Grid:
+            switch with.keyCode {
+//            case 123:
+//                //left
+//            case 124:
+//                //right
+//            case 125:
+//                //down
+//            case 126:
+//                //up
+            default:
+                super.keyDown(with: with)
+            }
+        default:
+            super.keyDown(with: with)
+        }
+    }
     
     /*
      func control(_ control: NSControl, textView: NSTextView, doCommandBy: Selector) -> Bool {
