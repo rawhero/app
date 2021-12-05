@@ -10,6 +10,7 @@
 		CE5B608C2754EA8700B48177 /* NSMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */; };
 		CE5B608D2754EA8700B48177 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B608B2754EA8700B48177 /* NSAttributedString.swift */; };
 		CE714C3C275D0E0F007E6F3E /* UNUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */; };
+		CE714C3E275D1430007E6F3E /* Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE714C3D275D1430007E6F3E /* Export.swift */; };
 		CE82EA122753B0C8007E24F3 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = CE82EA112753B0C8007E24F3 /* Core */; };
 		CE82EA142753B122007E24F3 /* Global.swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE82EA132753B122007E24F3 /* Global.swift.swift */; };
 		CE82EA172753B30A007E24F3 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE82EA162753B30A007E24F3 /* CloudKit.framework */; };
@@ -60,6 +61,7 @@
 		CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMutableAttributedString.swift; sourceTree = "<group>"; };
 		CE5B608B2754EA8700B48177 /* NSAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
 		CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNUserNotificationCenter.swift; sourceTree = "<group>"; };
+		CE714C3D275D1430007E6F3E /* Export.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Export.swift; sourceTree = "<group>"; };
 		CE82EA132753B122007E24F3 /* Global.swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift.swift; sourceTree = "<group>"; };
 		CE82EA162753B30A007E24F3 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		CE8802A1275697A000909C85 /* Bar.Option.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bar.Option.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				CEFA38702755355100C05C3B /* CollectionItemInfo.swift */,
 				CEF59EC02752857400B40DFB /* Control.State.swift */,
 				CEF59EBC2752857400B40DFB /* Control.swift */,
+				CE714C3D275D1430007E6F3E /* Export.swift */,
 				CEF59EBA2752857400B40DFB /* Flip.swift */,
 				CEF59ECE2752891300B40DFB /* Gradient.swift */,
 				CEF59EB92752857400B40DFB /* Image.swift */,
@@ -309,6 +312,7 @@
 				CEFA38772755355100C05C3B /* CollectionCell.swift in Sources */,
 				CEF59EC42752857400B40DFB /* Image.swift in Sources */,
 				CEF59EC52752857400B40DFB /* Flip.swift in Sources */,
+				CE714C3E275D1430007E6F3E /* Export.swift in Sources */,
 				CEF59EDB27529B5500B40DFB /* Invalid.swift in Sources */,
 				CEA07F942758FB1F00FF04CE /* Window.Detail.swift in Sources */,
 				CEF59ED127528E3100B40DFB /* Window.swift in Sources */,

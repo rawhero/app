@@ -115,6 +115,10 @@ final class Subbar: NSVisualEffectView {
                         
                         switch selected.first!.speed {
                         case let .iso(iso):
+                            string.append(.make("ISO ", attributes: [
+                                .font: NSFont.preferredFont(forTextStyle: .callout),
+                                .foregroundColor: NSColor.secondaryLabelColor]))
+                            
                             string.append(.make(iso.formatted(), attributes: [
                                 .font: NSFont.monospacedSystemFont(ofSize: NSFont.preferredFont(forTextStyle: .callout).pointSize, weight: .regular),
                                 .foregroundColor: NSColor.secondaryLabelColor]))

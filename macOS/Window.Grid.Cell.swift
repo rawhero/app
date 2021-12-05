@@ -72,7 +72,7 @@ extension Window.Grid {
             
             let margin = Shape()
             margin.fillColor = .clear
-            margin.lineWidth = 3
+            margin.lineWidth = 4
             self.margin = margin
             
             super.init()

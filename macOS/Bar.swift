@@ -85,6 +85,17 @@ final class Bar: NSVisualEffectView {
             
             let export = Option(icon: "square.and.arrow.up", size: 13)
             export.toolTip = "Export"
+            export
+                .click
+                .sink { [weak self] in
+                    let items = selected.value
+                    guard !items.isEmpty else { return }
+                    
+                    let export = Export(items: items)
+                    self?.window?.addChildWindow(export, ordered: .above)
+                    export.makeKey()
+                }
+                .store(in: &subs)
             
             let left = NSStackView(views: [title, sorting, zooming])
             left.translatesAutoresizingMaskIntoConstraints = false
