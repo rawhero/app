@@ -3,10 +3,14 @@ import Combine
 import Core
 
 extension Window {
-    final class Grid: Collection<Grid.Cell, Info>, CAAnimationDelegate {
+    final class Grid: Collection<Grid.Cell, Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         private let double = PassthroughSubject<CGPoint, Never>()
+        
+        deinit {
+            print("grid gone")
+        }
         
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>,
@@ -78,14 +82,64 @@ extension Window {
                         }
                     self?.size.send(.init(width: 0, height: result.y.max() ?? 0))
                     
-                    if let selected = selected.value.first,
-                       let item = result.items.first(where: { $0.info.picture.id == selected.id}),
+                    var animate: URL?
+                    
+                    if let selected = selected.value.first?.id,
+                       let item = result.items.first(where: { $0.info.picture.id == selected}),
                        let midY = self?.bounds.midY {
                         
-                        print("scroll \(item.rect.midY - midY)")
                         self?.contentView.bounds.origin.y = max(item.rect.midY - midY, 0)
+                        animate = selected
                     }
+                    
                     self?.items.send(result.items)
+                    
+                    if let animate = animate,
+                       let bounds = self?.bounds,
+                       let offset = self?.contentView.bounds.origin.y {
+                        self?
+                            .cells
+                            .first {
+                                $0.item?.info.picture.id == animate
+                            }
+                            .map { cell in
+                                cell.removeFromSuperlayer()
+                                cell.backgroundColor = NSColor.controlBackgroundColor.cgColor
+                                cell.frame = .init(x: 0, y: offset, width: bounds.width, height: bounds.height)
+                                cell.gradient.isHidden = true
+                                cell.margin.isHidden = true
+                                cell.image.frame.size = cell.frame.size
+                                self?.documentView?.layer?.addSublayer(cell)
+                                
+                                ["bounds", "position"]
+                                    .forEach {
+                                        let transition = CABasicAnimation(keyPath: $0)
+                                        transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width / 2, dy: cell.frame.height / 2)
+                                        transition.duration = 0.35
+                                        transition.timingFunction = .init(name: .easeOut)
+                                        cell.add(transition, forKey: $0)
+                                    }
+                                
+                                ["bounds", "position"]
+                                    .forEach {
+                                        let transition = CABasicAnimation(keyPath: $0)
+                                        transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width, dy: cell.frame.height)
+                                        transition.duration = 0.35
+                                        transition.timingFunction = .init(name: .easeOut)
+                                        cell.image.add(transition, forKey: $0)
+                                    }
+
+                                cell.frame = cell.item!.rect
+                                cell.image.frame.size = cell.frame.size
+
+                                DispatchQueue
+                                    .main
+                                    .asyncAfter(deadline: .now() + .milliseconds(400)) {
+                                        cell.gradient.isHidden = false
+                                        cell.margin.isHidden = false
+                                    }
+                            }
+                    }
                 }
                 .store(in: &subs)
             
@@ -182,22 +236,30 @@ extension Window {
                         self?.animatedOut()
                         return
                     }
-                    cell.image.removeFromSuperlayer()
-                    cell.image.contentsGravity = .resizeAspect
-                    cell.image.backgroundColor = NSColor.controlBackgroundColor.cgColor
-                    self?.documentView?.layer?.addSublayer(cell.image)
+                    
+                    cell.removeFromSuperlayer()
+                    cell.backgroundColor = NSColor.controlBackgroundColor.cgColor
+                    cell.gradient.isHidden = true
+                    cell.margin.isHidden = true
+                    self?.documentView?.layer?.addSublayer(cell)
                     
                     ["bounds", "position"]
                         .forEach {
                             let transition = CABasicAnimation(keyPath: $0)
-                            transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width / 2, dy: cell.frame.height / 2)
                             transition.duration = 0.35
-                            transition.timingFunction = .init(name: .easeInEaseOut)
-                            transition.delegate = self
+                            transition.timingFunction = .init(name: .easeIn)
+                            cell.add(transition, forKey: $0)
                             cell.image.add(transition, forKey: $0)
                         }
 
-                    cell.image.frame = .init(x: 0, y: offset, width: bounds.width, height: bounds.height)
+                    cell.frame = .init(x: 0, y: offset, width: bounds.width, height: bounds.height)
+                    cell.image.frame.size = cell.frame.size
+                    
+                    DispatchQueue
+                        .main
+                        .asyncAfter(deadline: .now() + .milliseconds(400)) {
+                            self?.animatedOut()
+                        }
                 }
                 .store(in: &subs)
             
@@ -215,12 +277,6 @@ extension Window {
             default:
                 click.send((point: point(with: with), multiple: with.modifierFlags.contains(.shift)
                             || with.modifierFlags.contains(.command)))
-            }
-        }
-        
-        func animationDidStop(_: CAAnimation, finished: Bool) {
-            if finished {
-                animatedOut()
             }
         }
         

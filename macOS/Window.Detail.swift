@@ -61,6 +61,9 @@ extension Window {
         
         func pageController(_: NSPageController, prepare: NSViewController, with: Any?) {
             if let info = with as? Info {
+                if info.picture.id == selected.value.first?.id {
+                    (prepare.view as! Cell).animate = false
+                }
                 (prepare.view as! Cell).info = info
             }
         }

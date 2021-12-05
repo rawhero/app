@@ -7,8 +7,8 @@ extension Window.Grid {
         static let spacing = CGFloat(4)
         static let width_spacing = width + spacing
         private(set) weak var image: CollectionImage!
-        private weak var margin: Shape!
-        private weak var gradient: Gradient!
+        private(set) weak var margin: Shape!
+        private(set) weak var gradient: Gradient!
         private var sub: AnyCancellable?
         
         override var item: CollectionItem<Window.Info>? {
@@ -46,7 +46,7 @@ extension Window.Grid {
                             switch $0 {
                             case let .image(image):
                                 self?.image.contents = image
-                                self?.image.contentsGravity = .resizeAspectFill
+                                self?.image.contentsGravity = .resizeAspect
                             case .error:
                                 self?.image.contents = NSImage(systemSymbolName: "exclamationmark.triangle.fill", accessibilityDescription: nil)?
                                     .withSymbolConfiguration(.init(pointSize: 12, weight: .light)
