@@ -32,13 +32,11 @@ import Core
 //        }
 
         registerForRemoteNotifications()
-//        UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().delegate = self
         
-//        Task {
-//            _ = await UNUserNotificationCenter.request()
-//        }
-        
-        
+        Task {
+            _ = await UNUserNotificationCenter.request()
+        }
     }
     
     func applicationDidBecomeActive(_: Notification) {
@@ -49,9 +47,9 @@ import Core
         cloud.pull.send()
     }
     
-//    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-//        await center.present(notification)
-//    }
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        await center.present(notification)
+    }
     
     @objc override func orderFrontStandardAboutPanel(_ sender: Any?) {
 //        (anyWindow() ?? About())

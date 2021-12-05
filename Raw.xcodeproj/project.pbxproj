@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CE5B608C2754EA8700B48177 /* NSMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */; };
 		CE5B608D2754EA8700B48177 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B608B2754EA8700B48177 /* NSAttributedString.swift */; };
+		CE714C3C275D0E0F007E6F3E /* UNUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */; };
 		CE82EA122753B0C8007E24F3 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = CE82EA112753B0C8007E24F3 /* Core */; };
 		CE82EA142753B122007E24F3 /* Global.swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE82EA132753B122007E24F3 /* Global.swift.swift */; };
 		CE82EA172753B30A007E24F3 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE82EA162753B30A007E24F3 /* CloudKit.framework */; };
@@ -23,7 +24,7 @@
 		CEA8927E27527A9F00D0603B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA8927D27527A9F00D0603B /* App.swift */; };
 		CEA8928227527AA000D0603B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8928127527AA000D0603B /* Assets.xcassets */; };
 		CEA8928C27527DE400D0603B /* Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA8928B27527DE400D0603B /* Launch.swift */; };
-		CEB04A9D275A4F5900DF17ED /* Window.Detail.Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB04A9C275A4F5900DF17ED /* Window.Detail.Empty.swift */; };
+		CEB04A9D275A4F5900DF17ED /* Window.Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB04A9C275A4F5900DF17ED /* Window.Empty.swift */; };
 		CECFC37C2753E8B900CE985C /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CECFC37B2753E8B900CE985C /* StoreKit.framework */; };
 		CEED0F95275791DF0076CFBC /* Subbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEED0F94275791DF0076CFBC /* Subbar.swift */; };
 		CEED0F972757CBDF0076CFBC /* Switch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEED0F962757CBDF0076CFBC /* Switch.swift */; };
@@ -58,6 +59,7 @@
 /* Begin PBXFileReference section */
 		CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMutableAttributedString.swift; sourceTree = "<group>"; };
 		CE5B608B2754EA8700B48177 /* NSAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
+		CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNUserNotificationCenter.swift; sourceTree = "<group>"; };
 		CE82EA132753B122007E24F3 /* Global.swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift.swift; sourceTree = "<group>"; };
 		CE82EA162753B30A007E24F3 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		CE8802A1275697A000909C85 /* Bar.Option.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bar.Option.swift; sourceTree = "<group>"; };
@@ -74,7 +76,7 @@
 		CEA8928627527AA000D0603B /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		CEA8928A27527CE600D0603B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CEA8928B27527DE400D0603B /* Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Launch.swift; sourceTree = "<group>"; };
-		CEB04A9C275A4F5900DF17ED /* Window.Detail.Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.Detail.Empty.swift; sourceTree = "<group>"; };
+		CEB04A9C275A4F5900DF17ED /* Window.Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.Empty.swift; sourceTree = "<group>"; };
 		CECFC37B2753E8B900CE985C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CEED0F94275791DF0076CFBC /* Subbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subbar.swift; sourceTree = "<group>"; };
 		CEED0F962757CBDF0076CFBC /* Switch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switch.swift; sourceTree = "<group>"; };
@@ -185,8 +187,8 @@
 				CEF59EBE2752857400B40DFB /* Text.swift */,
 				CEF59EBF2752857400B40DFB /* Vibrant.swift */,
 				CEA07F952758FB7800FF04CE /* Window.Detail.Cell.swift */,
-				CEB04A9C275A4F5900DF17ED /* Window.Detail.Empty.swift */,
 				CEA07F932758FB1F00FF04CE /* Window.Detail.swift */,
+				CEB04A9C275A4F5900DF17ED /* Window.Empty.swift */,
 				CEFA387F2755388B00C05C3B /* Window.Grid.Cell.swift */,
 				CEFA387D2755388B00C05C3B /* Window.Grid.swift */,
 				CEFA387E2755388B00C05C3B /* Window.Info.swift */,
@@ -202,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				CE82EA132753B122007E24F3 /* Global.swift.swift */,
+				CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -318,8 +321,9 @@
 				CEFA38742755355100C05C3B /* Collection.swift in Sources */,
 				CEF59EC32752857400B40DFB /* Action.swift in Sources */,
 				CEA8927E27527A9F00D0603B /* App.swift in Sources */,
+				CE714C3C275D0E0F007E6F3E /* UNUserNotificationCenter.swift in Sources */,
 				CE82EA142753B122007E24F3 /* Global.swift.swift in Sources */,
-				CEB04A9D275A4F5900DF17ED /* Window.Detail.Empty.swift in Sources */,
+				CEB04A9D275A4F5900DF17ED /* Window.Empty.swift in Sources */,
 				CEFA387A275535C400C05C3B /* CollectionImage.swift in Sources */,
 				CE8802A627569DBF00909C85 /* Bar.Sorting.swift in Sources */,
 				CEED0F972757CBDF0076CFBC /* Switch.swift in Sources */,

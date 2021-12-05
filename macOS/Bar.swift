@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import UserNotifications
 import Core
 
 final class Bar: NSVisualEffectView {
@@ -9,7 +10,7 @@ final class Bar: NSVisualEffectView {
     required init?(coder: NSCoder) { nil }
     init(
         url: URL,
-        count: CurrentValueSubject<Int, Never>,
+        info: CurrentValueSubject<[Window.Info], Never>,
         selected: CurrentValueSubject<[Core.Picture], Never>,
         sort: CurrentValueSubject<Window.Sort, Never>,
         zoom: CurrentValueSubject<Window.Zoom, Never>) {
@@ -47,6 +48,40 @@ final class Bar: NSVisualEffectView {
             
             let delete = Option(icon: "trash", size: 13)
             delete.toolTip = "Delete photos"
+            delete
+                .click
+                .sink {
+                    let items = selected.value
+                    guard !items.isEmpty else { return }
+                    
+                    let alert = NSAlert()
+                    alert.alertStyle = .warning
+                    alert.icon = .init(systemSymbolName: "trash", accessibilityDescription: nil)
+                    alert.messageText = items.count == 1 ? "Delete photo?" : "Delete photos?"
+                    
+                    let delete = alert.addButton(withTitle: "Delete")
+                    let cancel = alert.addButton(withTitle: "Cancel")
+                    delete.keyEquivalent = "\r"
+                    cancel.keyEquivalent = "\u{1b}"
+                    if alert.runModal().rawValue == delete.tag {
+                        selected.send([])
+                        info.value = info
+                            .value
+                            .filter {
+                                !items.contains($0.picture)
+                            }
+                        
+                        items
+                            .forEach {
+                                try? FileManager.default.trashItem(at: $0.id, resultingItemURL: nil)
+                            }
+                        
+                        Task {
+                            await UNUserNotificationCenter.send(message: items.count == 1 ? "Delete photo!" : "Deleted photos!")
+                        }
+                    }
+                }
+                .store(in: &subs)
             
             let export = Option(icon: "square.and.arrow.up", size: 13)
             export.toolTip = "Export"
@@ -66,7 +101,11 @@ final class Bar: NSVisualEffectView {
             right.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10).isActive = true
             right.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
             
-            count
+            info
+                .map {
+                    $0.count
+                }
+                .removeDuplicates()
                 .receive(on: DispatchQueue.main)
                 .sink { count in
                     title.attributedStringValue = .make {

@@ -84,8 +84,11 @@ extension Window.Grid {
         
         override func update() {
             switch state {
-            case .highlighted, .pressed:
+            case .pressed:
                 margin.strokeColor = NSColor.controlAccentColor.cgColor
+                gradient.opacity = 0
+            case .highlighted:
+                margin.strokeColor = .clear
                 gradient.opacity = 0.25
             default:
                 margin.strokeColor = .clear

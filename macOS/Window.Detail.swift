@@ -43,6 +43,9 @@ extension Window {
                     if let first = selected.value.first,
                        let index = $0.firstIndex(where: { $0.id == first.id.absoluteString }) {
                         self?.controller.selectedIndex = index
+                    } else if let first = $0.first {
+                        self?.controller.selectedIndex = 0
+                        selected.send([first.picture])
                     }
                 }
                 .store(in: &subs)
@@ -59,7 +62,7 @@ extension Window {
         
         func pageController(_: NSPageController, viewControllerForIdentifier: NSPageController.ObjectIdentifier) -> NSViewController {
             let controller = NSViewController()
-            controller.view = viewControllerForIdentifier.isEmpty ? Empty() : Cell()
+            controller.view = viewControllerForIdentifier.isEmpty ? NSView() : Cell()
             controller.view.autoresizingMask = [.width, .height]
             return controller
         }

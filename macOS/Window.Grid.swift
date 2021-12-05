@@ -8,10 +8,6 @@ extension Window {
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         private let double = PassthroughSubject<CGPoint, Never>()
         
-        deinit {
-            print("grid gone")
-        }
-        
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>,
              selected: CurrentValueSubject<[Core.Picture], Never>,
@@ -22,9 +18,6 @@ extension Window {
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
             scrollerInsets.bottom = 5
-            self.selected = .init(selected
-                                    .value
-                                    .map(\.id.absoluteString))
             
             let columns = PassthroughSubject<(width: CGFloat, count: Int), Never>()
             
@@ -86,7 +79,8 @@ extension Window {
                     
                     if let selected = selected.value.first?.id,
                        let item = result.items.first(where: { $0.info.picture.id == selected}),
-                       let midY = self?.bounds.midY {
+                       let midY = self?.bounds.midY,
+                       self?.cells.isEmpty == true {
                         
                         self?.contentView.bounds.origin.y = max(item.rect.midY - midY, 0)
                         animate = selected
@@ -171,7 +165,6 @@ extension Window {
                         selected.value.remove {
                             $0.id == info.picture.id
                         }
-                        self?.selected.remove(info.id)
                     default:
                         if !select.multiple {
                             self?
@@ -187,10 +180,8 @@ extension Window {
                         select.cell.state = .pressed
                         
                         if select.multiple {
-                            self?.selected.insert(info.id)
                             selected.value.append(info.picture)
                         } else {
-                            self?.selected = [info.id]
                             selected.value = [info.picture]
                         }
                     }
@@ -261,6 +252,12 @@ extension Window {
                         .asyncAfter(deadline: .now() + .milliseconds(400)) {
                             self?.animatedOut()
                         }
+                }
+                .store(in: &subs)
+            
+            selected
+                .sink { [weak self] in
+                    self?.selected = .init($0.map(\.id.absoluteString))
                 }
                 .store(in: &subs)
             

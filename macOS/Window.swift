@@ -34,7 +34,6 @@ final class Window: NSWindow, NSWindowDelegate {
         let sort = CurrentValueSubject<Sort, Never>(.name)
         let selected = CurrentValueSubject<[Core.Picture], Never>([])
         let info = CurrentValueSubject<[Info], Never>([])
-        let count = CurrentValueSubject<Int, Never>(0)
         let thumbnails = Camera(strategy: .thumbnail)
         let hd = Camera(strategy: .hd)
         let zoom = CurrentValueSubject<Zoom, Never>(.grid)
@@ -49,7 +48,7 @@ final class Window: NSWindow, NSWindowDelegate {
         content.addSubview(separator)
         
         let top = NSTitlebarAccessoryViewController()
-        top.view = Bar(url: url, count: count, selected: selected, sort: sort, zoom: zoom)
+        top.view = Bar(url: url, info: info, selected: selected, sort: sort, zoom: zoom)
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
         
@@ -110,23 +109,33 @@ final class Window: NSWindow, NSWindowDelegate {
         
         zoom
             .removeDuplicates()
-            .sink { [weak self] new in
+            .combineLatest(info
+                            .map { $0.isEmpty }
+                            .removeDuplicates())
+            .sink { [weak self] new, empty in
                 let view: NSView
                 
-                switch new {
-                case .grid:
-                    view = Grid(info: info, selected: selected, clear: clear, zoom: zoom, animateOut: animateOut)
+                if empty {
+                    view = Empty()
                     self?.present?.removeFromSuperview()
-                case .detail:
-                    view = Detail(info: info, selected: selected, zoom: zoom)
-                    
-                    if self?.present != nil {
-                        view.isHidden = true
-                        animateOut.send()
+                } else {
+                    switch new {
+                    case .grid:
+                        view = Grid(info: info, selected: selected, clear: clear, zoom: zoom, animateOut: animateOut)
+                        self?.present?.removeFromSuperview()
+                    case .detail:
+                        view = Detail(info: info, selected: selected, zoom: zoom)
+                        
+                        if self?.present != nil {
+                            self?.present = view
+                            view.isHidden = true
+                            animateOut.send()
+                        }
                     }
                 }
                 
                 self?.present = view
+                
                 content.addSubview(view)
                 
                 view.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
@@ -138,9 +147,7 @@ final class Window: NSWindow, NSWindowDelegate {
         
         Task
             .detached(priority: .utility) {
-                let photos = FileManager.default.pictures(at: url)
-                pictures.send(photos)
-                count.send(photos.count)
+                pictures.send(FileManager.default.pictures(at: url))
             }
     }
     
