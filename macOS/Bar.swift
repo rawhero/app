@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import Core
 
 final class Bar: NSVisualEffectView {
     private weak var zoom: CurrentValueSubject<Window.Zoom, Never>!
@@ -9,6 +10,7 @@ final class Bar: NSVisualEffectView {
     init(
         url: URL,
         count: CurrentValueSubject<Int, Never>,
+        selected: CurrentValueSubject<[Core.Picture], Never>,
         sort: CurrentValueSubject<Window.Sort, Never>,
         zoom: CurrentValueSubject<Window.Zoom, Never>) {
             self.zoom = zoom
@@ -20,7 +22,7 @@ final class Bar: NSVisualEffectView {
             let title = Text(vibrancy: true)
             
             let sorting = Option(icon: "arrow.up.arrow.down", size: 13)
-            sorting.toolTip = "Order images by"
+            sorting.toolTip = "Order photos by"
             sorting
                 .click
                 .sink {
@@ -43,13 +45,26 @@ final class Bar: NSVisualEffectView {
             zooming.segmentDistribution = .fit
             zooming.segmentStyle = .rounded
             
+            let delete = Option(icon: "trash", size: 13)
+            delete.toolTip = "Delete photos"
+            
+            let export = Option(icon: "square.and.arrow.up", size: 13)
+            export.toolTip = "Export"
+            
             let left = NSStackView(views: [title, sorting, zooming])
             left.translatesAutoresizingMaskIntoConstraints = false
             left.spacing = 16
             addSubview(left)
             
+            let right = NSStackView(views: [delete, export])
+            right.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(right)
+            
             left.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 10).isActive = true
             left.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+            
+            right.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10).isActive = true
+            right.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
             
             count
                 .receive(on: DispatchQueue.main)
@@ -75,6 +90,17 @@ final class Bar: NSVisualEffectView {
             zoom
                 .sink {
                     zooming.selectedSegment = $0.rawValue
+                }
+                .store(in: &subs)
+            
+            selected
+                .map {
+                    $0.isEmpty
+                }
+                .removeDuplicates()
+                .sink {
+                    delete.state = $0 ? .hidden : .on
+                    export.state = $0 ? .hidden : .on
                 }
                 .store(in: &subs)
         }

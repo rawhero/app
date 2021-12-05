@@ -30,6 +30,11 @@ extension Window {
             controller.view.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
             controller.view.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
             
+            if selected.value.isEmpty,
+               let first = info.value.first {
+                selected.send([first.picture])
+            }
+            
             info
                 .removeDuplicates()
                 .sink { [weak self] in
