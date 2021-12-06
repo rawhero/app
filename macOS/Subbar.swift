@@ -50,9 +50,9 @@ final class Subbar: NSVisualEffectView {
             Separator(mode: .vertical),
             resolution,
             Separator(mode: .vertical),
-            speed,
+            size,
             Separator(mode: .vertical),
-            size])
+            speed])
         single.translatesAutoresizingMaskIntoConstraints = false
         addSubview(single)
         
@@ -108,27 +108,29 @@ final class Subbar: NSVisualEffectView {
                     }
                     
                     speed.layer?.add(transition, forKey: "transition")
-                    speed.attributedStringValue = .make { string in
-                        string.append(.make("Speed", attributes: [
-                            .font: NSFont.preferredFont(forTextStyle: .caption1),
-                            .foregroundColor: NSColor.tertiaryLabelColor]))
-                        string.newLine()
-                        
-                        switch selected.first!.speed {
-                        case let .iso(iso):
-                            string.append(.make("ISO ", attributes: [
+                    
+                    switch selected.first!.speed {
+                    case let .iso(iso):
+                        speed.attributedStringValue = .make {
+                            $0.append(.make("Speed", attributes: [
+                                .font: NSFont.preferredFont(forTextStyle: .caption1),
+                                .foregroundColor: NSColor.tertiaryLabelColor]))
+                            
+                            $0.newLine()
+                            
+                            $0.append(.make("ISO ", attributes: [
                                 .font: NSFont.preferredFont(forTextStyle: .callout),
                                 .foregroundColor: NSColor.secondaryLabelColor]))
                             
-                            string.append(.make(iso.formatted(), attributes: [
+                            $0.append(.make(iso.formatted(), attributes: [
                                 .font: NSFont.monospacedSystemFont(ofSize: NSFont.preferredFont(forTextStyle: .callout).pointSize, weight: .regular),
                                 .foregroundColor: NSColor.secondaryLabelColor]))
-                        case .unknown:
-                            string.append(.make("Unknown", attributes: [
-                                .font: NSFont.preferredFont(forTextStyle: .callout),
-                                .foregroundColor: NSColor.secondaryLabelColor]))
                         }
+                    case .unknown:
+                        speed.attributedStringValue = .init()
                     }
+                    
+                    
                     
                     size.layer?.add(transition, forKey: "transition")
                     size.attributedStringValue = .make {

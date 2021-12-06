@@ -4,7 +4,7 @@ import Combine
 extension Window.Grid {
     final class Cell: CollectionCell<Window.Info> {
         static let width = CGFloat(120)
-        static let spacing = CGFloat(4)
+        static let spacing = CGFloat(5)
         static let width_spacing = width + spacing
         private(set) weak var image: CollectionImage!
         private weak var margin: Shape!
