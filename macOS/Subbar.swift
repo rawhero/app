@@ -130,8 +130,6 @@ final class Subbar: NSVisualEffectView {
                         speed.attributedStringValue = .init()
                     }
                     
-                    
-                    
                     size.layer?.add(transition, forKey: "transition")
                     size.attributedStringValue = .make {
                         $0.append(.make("Size", attributes: [

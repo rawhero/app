@@ -4,8 +4,7 @@ import Core
 
 extension Window {
     final class Grid: Collection<Grid.Cell, Info> {
-        private static let insets2 = Cell.spacing + Cell.spacing
-        private(set) weak var move: PassthroughSubject<(direction: Direction, multiple: Bool), Never>!
+        private(set) weak var move: PassthroughSubject<(date: Date, direction: Direction, multiple: Bool), Never>!
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         private let double = PassthroughSubject<CGPoint, Never>()
         
@@ -14,7 +13,7 @@ extension Window {
              selected: CurrentValueSubject<[Core.Picture], Never>,
              zoom: CurrentValueSubject<Zoom, Never>,
              animateOut: PassthroughSubject<Void, Never>,
-             move: PassthroughSubject<(direction: Direction, multiple: Bool), Never>) {
+             move: PassthroughSubject<(date: Date, direction: Direction, multiple: Bool), Never>) {
             
             self.move = move
             
@@ -83,7 +82,7 @@ extension Window {
                        let selected = selected.value.first?.id,
                        let item = result.items.first(where: { $0.info.picture.id == selected }) {
                         
-                        self?.scrollTo(item: item)
+                        self?.scrollTo(item: item, animate: false)
                         self?.items.send(result.items)
                         self?.animateIn(id: item.info.id)
                         
@@ -131,8 +130,8 @@ extension Window {
             
             animateOut
                 .sink { [weak self] in
-                    guard let id = selected.value.first?.id ?? info.value.first?.picture.id else { return }
-                    self?.animateOut(id: id)
+                    guard let picture = selected.value.first ?? info.value.first?.picture else { return }
+                    self?.animateOut(picture: picture)
                 }
                 .store(in: &subs)
             
@@ -146,14 +145,47 @@ extension Window {
                         }
                 }
                 .store(in: &subs)
+            
+            items
+                .combineLatest(move)
+                .removeDuplicates {
+                    $0.1.date == $1.1.date
+                }
+                .filter { items, move in
+                    !items.isEmpty
+                }
+                .sink { [weak self] items, move in
+                    if let current = selected.value.last {
+                        items
+                            .item(from: current, with: move.direction)
+                            .map { choosen in
+                                if move.multiple {
+                                    if let index = selected.value.firstIndex(of: choosen.info.picture) {
+                                        selected.value.remove(at: index)
+                                    }
+                                    selected.value.append(choosen.info.picture)
+                                } else {
+                                    selected.send([choosen.info.picture])
+                                }
+                                
+                                self?.scrollTo(item: choosen, animate: true)
+                            }
+                    } else {
+                        selected.send([info.value.first!.picture])
+                        self?.scrollTo(item: items.first { $0.info.id == info.value.first!.id }!, animate: true)
+                    }
+                }
+                .store(in: &subs)
         }
         
         override func mouseUp(with: NSEvent) {
             switch with.clickCount {
+            case 1:
+                click.send((point: point(with: with), multiple: with.multiple))
             case 2:
                 double.send(point(with: with))
             default:
-                click.send((point: point(with: with), multiple: with.multiple))
+                super.mouseUp(with: with)
             }
         }
         
@@ -171,8 +203,13 @@ extension Window {
                 }
         }
         
-        private func scrollTo(item: CollectionItem<Info>) {
-            contentView.bounds.origin.y = max(item.rect.midY - bounds.midY, 0)
+        private func scrollTo(item: CollectionItem<Info>, animate: Bool) {
+            let y = max(item.rect.midY - bounds.midY, 0)
+            if animate {
+                contentView.animator().bounds.origin.y = y
+            } else {
+                contentView.bounds.origin.y = y
+            }
         }
         
         private func animateIn(id: String) {
@@ -216,13 +253,13 @@ extension Window {
                 }
         }
         
-        private func animateOut(id: URL) {
+        private func animateOut(picture: Core.Picture) {
             guard
                 let cell = cells
                     .first(where: {
                         $0
                             .item
-                            .map { $0.info.picture.id == id }
+                            .map { $0.info.picture.id == picture.id }
                         ?? false
                     })
             else {
@@ -257,5 +294,37 @@ extension Window {
             (window as? Window)?.animatedOut()
             removeFromSuperview()
         }
+    }
+}
+
+private extension Set where Element == CollectionItem<Window.Info> {
+    func item(from: Core.Picture, with: Window.Direction) -> Element? {
+        let rect: CGRect
+        let current = first { $0.info.picture.id == from.id }!.rect
+        
+        switch with {
+        case .up:
+            rect = .init(x: current.midX, y: current.minY - (Window.Grid.Cell.spacing + 1),
+                         width: 1, height: 1)
+        case .down:
+            rect = .init(x: current.midX, y: current.maxY + Window.Grid.Cell.spacing + 1,
+                         width: 1, height: 1)
+        case .left:
+            rect = .init(x: current.minX - (Window.Grid.Cell.spacing + 1), y: current.minY,
+                         width: 1, height: Window.Grid.Cell.spacing + 1)
+        case .right:
+            rect = .init(x: current.maxX + Window.Grid.Cell.spacing + 1, y: current.minY,
+                         width: 1, height: Window.Grid.Cell.spacing + 1)
+        }
+        
+        return filter {
+            $0
+                .rect
+                .contains(rect)
+        }
+        .sorted {
+            $0.rect.minY < $1.rect.minY
+        }
+        .first
     }
 }

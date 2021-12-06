@@ -37,7 +37,7 @@ final class Window: NSWindow, NSWindowDelegate {
         let hd = Camera(strategy: .hd)
         let zoom = CurrentValueSubject<Zoom, Never>(.grid)
         let animateOut = PassthroughSubject<Void, Never>()
-        let move = PassthroughSubject<(direction: Direction, multiple: Bool), Never>()
+        let move = PassthroughSubject<(date: Date, direction: Direction, multiple: Bool), Never>()
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -168,13 +168,13 @@ final class Window: NSWindow, NSWindowDelegate {
         case let grid as Grid:
             switch with.keyCode {
             case 123:
-                grid.move.send((direction: .left, multiple: with.multiple))
+                grid.move.send((date: .now, direction: .left, multiple: with.multiple))
             case 124:
-                grid.move.send((direction: .right, multiple: with.multiple))
+                grid.move.send((date: .now, direction: .right, multiple: with.multiple))
             case 125:
-                grid.move.send((direction: .up, multiple: with.multiple))
+                grid.move.send((date: .now, direction: .down, multiple: with.multiple))
             case 126:
-                grid.move.send((direction: .down, multiple: with.multiple))
+                grid.move.send((date: .now, direction: .up, multiple: with.multiple))
             default:
                 super.keyDown(with: with)
             }
