@@ -76,63 +76,19 @@ extension Window {
                                     $0.index = 0
                                 }
                         }
+                    
                     self?.size.send(.init(width: 0, height: result.y.max() ?? 0))
                     
-                    var animate: URL?
-                    
-                    if let selected = selected.value.first?.id,
-                       let item = result.items.first(where: { $0.info.picture.id == selected}),
-                       let midY = self?.bounds.midY,
-                       self?.cells.isEmpty == true {
+                    if self?.cells.isEmpty == true,
+                       let selected = selected.value.first?.id,
+                       let item = result.items.first(where: { $0.info.picture.id == selected }) {
                         
-                        self?.contentView.bounds.origin.y = max(item.rect.midY - midY, 0)
-                        animate = selected
-                    }
-                    
-                    self?.items.send(result.items)
-                    
-                    if let animate = animate,
-                       let bounds = self?.bounds,
-                       let offset = self?.contentView.bounds.origin.y {
-                        self?
-                            .cells
-                            .first {
-                                $0.item?.info.picture.id == animate
-                            }
-                            .map { cell in
-                                cell.removeFromSuperlayer()
-                                cell.startAnimation()
-                                cell.frame = .init(x: 0, y: offset, width: bounds.width, height: bounds.height)
-                                cell.image.frame.size = cell.frame.size
-                                self?.documentView?.layer?.addSublayer(cell)
-                                
-                                ["bounds", "position"]
-                                    .forEach {
-                                        let transition = CABasicAnimation(keyPath: $0)
-                                        transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width / 2, dy: cell.frame.height / 2)
-                                        transition.duration = 0.3
-                                        transition.timingFunction = .init(name: .easeIn)
-                                        cell.add(transition, forKey: $0)
-                                    }
-                                
-                                ["bounds", "position"]
-                                    .forEach {
-                                        let transition = CABasicAnimation(keyPath: $0)
-                                        transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width, dy: cell.frame.height)
-                                        transition.duration = 0.3
-                                        transition.timingFunction = .init(name: .easeIn)
-                                        cell.image.add(transition, forKey: $0)
-                                    }
-
-                                cell.frame = cell.item!.rect
-                                cell.image.frame.size = cell.frame.size
-
-                                DispatchQueue
-                                    .main
-                                    .asyncAfter(deadline: .now() + .milliseconds(400)) {
-                                        cell.endAnimation()
-                                    }
-                            }
+                        self?.scrollTo(item: item)
+                        self?.items.send(result.items)
+                        self?.animateIn(id: item.info.id)
+                        
+                    } else {
+                        self?.items.send(result.items)
                     }
                 }
                 .store(in: &subs)
@@ -197,44 +153,8 @@ extension Window {
             
             animateOut
                 .sink { [weak self] in
-                    guard
-                        let bounds = self?.bounds,
-                        let offset = self?.contentView.bounds.origin.y,
-                        let id = selected.value.first?.id ?? info.value.first?.picture.id,
-                        let cell = self?
-                            .cells
-                            .first(where: {
-                                $0
-                                    .item
-                                    .map { $0.info.picture.id == id }
-                                ?? false
-                            })
-                    else {
-                        self?.animatedOut()
-                        return
-                    }
-                    
-                    cell.removeFromSuperlayer()
-                    cell.startAnimation()
-                    self?.documentView?.layer?.addSublayer(cell)
-                    
-                    ["bounds", "position"]
-                        .forEach {
-                            let transition = CABasicAnimation(keyPath: $0)
-                            transition.duration = 0.3
-                            transition.timingFunction = .init(name: .easeOut)
-                            cell.add(transition, forKey: $0)
-                            cell.image.add(transition, forKey: $0)
-                        }
-
-                    cell.frame = .init(x: 0, y: offset, width: bounds.width, height: bounds.height)
-                    cell.image.frame.size = cell.frame.size
-                    
-                    DispatchQueue
-                        .main
-                        .asyncAfter(deadline: .now() + .milliseconds(400)) {
-                            self?.animatedOut()
-                        }
+                    guard let id = selected.value.first?.id ?? info.value.first?.picture.id else { return }
+                    self?.animateOut(id: id)
                 }
                 .store(in: &subs)
             
@@ -257,6 +177,88 @@ extension Window {
             default:
                 click.send((point: point(with: with), multiple: with.multiple))
             }
+        }
+        
+        private func scrollTo(item: CollectionItem<Info>) {
+            contentView.bounds.origin.y = max(item.rect.midY - bounds.midY, 0)
+        }
+        
+        private func animateIn(id: String) {
+            cells
+                .first {
+                    $0.item?.info.id == id
+                }
+                .map { cell in
+                    cell.removeFromSuperlayer()
+                    cell.startAnimation()
+                    cell.frame = .init(x: 0, y: contentView.bounds.origin.y, width: bounds.width, height: bounds.height)
+                    cell.image.frame.size = cell.frame.size
+                    documentView!.layer!.addSublayer(cell)
+                    
+                    ["bounds", "position"]
+                        .forEach {
+                            let transition = CABasicAnimation(keyPath: $0)
+                            transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width / 2, dy: cell.frame.height / 2)
+                            transition.duration = 0.3
+                            transition.timingFunction = .init(name: .easeIn)
+                            cell.add(transition, forKey: $0)
+                        }
+                    
+                    ["bounds", "position"]
+                        .forEach {
+                            let transition = CABasicAnimation(keyPath: $0)
+                            transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width, dy: cell.frame.height)
+                            transition.duration = 0.3
+                            transition.timingFunction = .init(name: .easeIn)
+                            cell.image.add(transition, forKey: $0)
+                        }
+                    
+                    cell.frame = cell.item!.rect
+                    cell.image.frame.size = cell.frame.size
+                    
+                    DispatchQueue
+                        .main
+                        .asyncAfter(deadline: .now() + .milliseconds(400)) {
+                            cell.endAnimation()
+                        }
+                }
+        }
+        
+        private func animateOut(id: URL) {
+            guard
+                let cell = cells
+                    .first(where: {
+                        $0
+                            .item
+                            .map { $0.info.picture.id == id }
+                        ?? false
+                    })
+            else {
+                animatedOut()
+                return
+            }
+            
+            cell.removeFromSuperlayer()
+            cell.startAnimation()
+            documentView!.layer!.addSublayer(cell)
+            
+            ["bounds", "position"]
+                .forEach {
+                    let transition = CABasicAnimation(keyPath: $0)
+                    transition.duration = 0.3
+                    transition.timingFunction = .init(name: .easeOut)
+                    cell.add(transition, forKey: $0)
+                    cell.image.add(transition, forKey: $0)
+                }
+            
+            cell.frame = .init(x: 0, y: contentView.bounds.origin.y, width: bounds.width, height: bounds.height)
+            cell.image.frame.size = cell.frame.size
+            
+            DispatchQueue
+                .main
+                .asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+                    self?.animatedOut()
+                }
         }
         
         private func animatedOut() {
