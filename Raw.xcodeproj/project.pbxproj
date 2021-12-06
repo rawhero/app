@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE3F538B275E2ACA00FB1509 /* Window.Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */; };
+		CE3F538D275E2CC600FB1509 /* NSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538C275E2CC600FB1509 /* NSEvent.swift */; };
 		CE5B608C2754EA8700B48177 /* NSMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */; };
 		CE5B608D2754EA8700B48177 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B608B2754EA8700B48177 /* NSAttributedString.swift */; };
 		CE714C3C275D0E0F007E6F3E /* UNUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */; };
@@ -59,6 +61,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.Direction.swift; sourceTree = "<group>"; };
+		CE3F538C275E2CC600FB1509 /* NSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSEvent.swift; sourceTree = "<group>"; };
 		CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMutableAttributedString.swift; sourceTree = "<group>"; };
 		CE5B608B2754EA8700B48177 /* NSAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
 		CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNUserNotificationCenter.swift; sourceTree = "<group>"; };
@@ -194,7 +198,9 @@
 				CEF59EBF2752857400B40DFB /* Vibrant.swift */,
 				CEA07F952758FB7800FF04CE /* Window.Detail.Cell.swift */,
 				CEA07F932758FB1F00FF04CE /* Window.Detail.swift */,
+				CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */,
 				CEB04A9C275A4F5900DF17ED /* Window.Empty.swift */,
+				CE3F538C275E2CC600FB1509 /* NSEvent.swift */,
 				CEFA387F2755388B00C05C3B /* Window.Grid.Cell.swift */,
 				CEFA387D2755388B00C05C3B /* Window.Grid.swift */,
 				CEFA387E2755388B00C05C3B /* Window.Info.swift */,
@@ -302,6 +308,7 @@
 				CEFA38822755388B00C05C3B /* Window.Grid.Cell.swift in Sources */,
 				CEFA38762755355100C05C3B /* CollectionItem.swift in Sources */,
 				CEA79E1227541F9900397B5E /* Launch.Item.swift in Sources */,
+				CE3F538B275E2ACA00FB1509 /* Window.Direction.swift in Sources */,
 				CEFA38812755388B00C05C3B /* Window.Info.swift in Sources */,
 				CEF59ECC2752857400B40DFB /* Layer.swift in Sources */,
 				CEF59EC82752857400B40DFB /* Separator.swift in Sources */,
@@ -325,6 +332,7 @@
 				CEFA38782755355100C05C3B /* CollectionCellState.swift in Sources */,
 				CEED0F95275791DF0076CFBC /* Subbar.swift in Sources */,
 				CE714C40275D1870007E6F3E /* Export.Item.swift in Sources */,
+				CE3F538D275E2CC600FB1509 /* NSEvent.swift in Sources */,
 				CEA07F962758FB7800FF04CE /* Window.Detail.Cell.swift in Sources */,
 				CEFA38742755355100C05C3B /* Collection.swift in Sources */,
 				CEF59EC32752857400B40DFB /* Action.swift in Sources */,

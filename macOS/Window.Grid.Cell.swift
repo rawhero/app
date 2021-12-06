@@ -7,8 +7,8 @@ extension Window.Grid {
         static let spacing = CGFloat(4)
         static let width_spacing = width + spacing
         private(set) weak var image: CollectionImage!
-        private(set) weak var margin: Shape!
-        private(set) weak var gradient: Gradient!
+        private weak var margin: Shape!
+        private weak var gradient: Gradient!
         private var sub: AnyCancellable?
         
         override var item: CollectionItem<Window.Info>? {
@@ -80,6 +80,18 @@ extension Window.Grid {
             addSublayer(image)
             addSublayer(gradient)
             addSublayer(margin)
+        }
+        
+        func startAnimation() {
+            gradient.isHidden = true
+            margin.isHidden = true
+            backgroundColor = NSColor.controlBackgroundColor.cgColor
+        }
+        
+        func endAnimation() {
+            gradient.isHidden = false
+            margin.isHidden = false
+            backgroundColor = NSColor.labelColor.withAlphaComponent(0.05).cgColor
         }
         
         override func update() {

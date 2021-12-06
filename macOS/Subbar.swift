@@ -7,8 +7,7 @@ final class Subbar: NSVisualEffectView {
     
     required init?(coder: NSCoder) { nil }
     init(selected: CurrentValueSubject<[Core.Picture], Never>,
-         zoom: CurrentValueSubject<Window.Zoom, Never>,
-         clear: PassthroughSubject<Void, Never>) {
+         zoom: CurrentValueSubject<Window.Zoom, Never>) {
         
         super.init(frame: .zero)
         state = .active
@@ -39,7 +38,9 @@ final class Subbar: NSVisualEffectView {
         let clearing = Plain(title: "Clear")
         clearing
             .click
-            .subscribe(clear)
+            .sink {
+                selected.value = []
+            }
             .store(in: &subs)
         
         let single = NSStackView(views: [

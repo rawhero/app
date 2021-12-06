@@ -5,15 +5,18 @@ import Core
 extension Window {
     final class Grid: Collection<Grid.Cell, Info> {
         private static let insets2 = Cell.spacing + Cell.spacing
+        private(set) weak var move: PassthroughSubject<(direction: Direction, multiple: Bool), Never>!
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         private let double = PassthroughSubject<CGPoint, Never>()
         
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>,
              selected: CurrentValueSubject<[Core.Picture], Never>,
-             clear: PassthroughSubject<Void, Never>,
              zoom: CurrentValueSubject<Zoom, Never>,
-             animateOut: PassthroughSubject<Void, Never>) {
+             animateOut: PassthroughSubject<Void, Never>,
+             move: PassthroughSubject<(direction: Direction, multiple: Bool), Never>) {
+            
+            self.move = move
             
             super.init(active: .activeInKeyWindow)
             scrollerInsets.top = 5
@@ -98,10 +101,8 @@ extension Window {
                             }
                             .map { cell in
                                 cell.removeFromSuperlayer()
-                                cell.backgroundColor = NSColor.controlBackgroundColor.cgColor
+                                cell.startAnimation()
                                 cell.frame = .init(x: 0, y: offset, width: bounds.width, height: bounds.height)
-                                cell.gradient.isHidden = true
-                                cell.margin.isHidden = true
                                 cell.image.frame.size = cell.frame.size
                                 self?.documentView?.layer?.addSublayer(cell)
                                 
@@ -109,8 +110,8 @@ extension Window {
                                     .forEach {
                                         let transition = CABasicAnimation(keyPath: $0)
                                         transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width / 2, dy: cell.frame.height / 2)
-                                        transition.duration = 0.35
-                                        transition.timingFunction = .init(name: .easeOut)
+                                        transition.duration = 0.3
+                                        transition.timingFunction = .init(name: .easeIn)
                                         cell.add(transition, forKey: $0)
                                     }
                                 
@@ -118,8 +119,8 @@ extension Window {
                                     .forEach {
                                         let transition = CABasicAnimation(keyPath: $0)
                                         transition.fromValue = cell.frame.offsetBy(dx: cell.frame.width, dy: cell.frame.height)
-                                        transition.duration = 0.35
-                                        transition.timingFunction = .init(name: .easeOut)
+                                        transition.duration = 0.3
+                                        transition.timingFunction = .init(name: .easeIn)
                                         cell.image.add(transition, forKey: $0)
                                     }
 
@@ -129,9 +130,7 @@ extension Window {
                                 DispatchQueue
                                     .main
                                     .asyncAfter(deadline: .now() + .milliseconds(400)) {
-                                        cell.gradient.isHidden = false
-                                        cell.margin.isHidden = false
-                                        cell.backgroundColor = NSColor.labelColor.withAlphaComponent(0.05).cgColor
+                                        cell.endAnimation()
                                     }
                             }
                     }
@@ -156,29 +155,15 @@ extension Window {
                             (cell: $0, multiple: click.multiple)
                         }
                 }
-                .sink { [weak self] select in
+                .sink { select in
                     guard let info = select.cell.item?.info else { return }
                     
                     switch select.cell.state {
                     case .pressed:
-                        select.cell.state = .none
                         selected.value.remove {
                             $0.id == info.picture.id
                         }
                     default:
-                        if !select.multiple {
-                            self?
-                                .cells
-                                .filter {
-                                    $0.state == .pressed
-                                }
-                                .forEach {
-                                    $0.state = .none
-                                }
-                        }
-                        
-                        select.cell.state = .pressed
-                        
                         if select.multiple {
                             selected.value.append(info.picture)
                         } else {
@@ -230,16 +215,14 @@ extension Window {
                     }
                     
                     cell.removeFromSuperlayer()
-                    cell.backgroundColor = NSColor.controlBackgroundColor.cgColor
-                    cell.gradient.isHidden = true
-                    cell.margin.isHidden = true
+                    cell.startAnimation()
                     self?.documentView?.layer?.addSublayer(cell)
                     
                     ["bounds", "position"]
                         .forEach {
                             let transition = CABasicAnimation(keyPath: $0)
-                            transition.duration = 0.35
-                            transition.timingFunction = .init(name: .easeIn)
+                            transition.duration = 0.3
+                            transition.timingFunction = .init(name: .easeOut)
                             cell.add(transition, forKey: $0)
                             cell.image.add(transition, forKey: $0)
                         }
@@ -256,14 +239,13 @@ extension Window {
                 .store(in: &subs)
             
             selected
-                .sink { [weak self] in
-                    self?.selected = .init($0.map(\.id.absoluteString))
-                }
-                .store(in: &subs)
-            
-            clear
-                .sink { [weak self] in
-                    self?.clear.send()
+                .sink { [weak self] selected in
+                    self?.selected = .init(selected.map(\.id.absoluteString))
+                    self?
+                        .cells
+                        .forEach { cell in
+                            cell.state = selected.contains { $0.id == cell.item?.info.picture.id } ? .pressed : .none
+                        }
                 }
                 .store(in: &subs)
         }
@@ -273,8 +255,7 @@ extension Window {
             case 2:
                 double.send(point(with: with))
             default:
-                click.send((point: point(with: with), multiple: with.modifierFlags.contains(.shift)
-                            || with.modifierFlags.contains(.command)))
+                click.send((point: point(with: with), multiple: with.multiple))
             }
         }
         

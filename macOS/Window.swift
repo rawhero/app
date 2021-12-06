@@ -30,7 +30,6 @@ final class Window: NSWindow, NSWindowDelegate {
         
         let pictures = PassthroughSubject<Set<Core.Picture>, Never>()
         let sorted = PassthroughSubject<[Core.Picture], Never>()
-        let clear = PassthroughSubject<Void, Never>()
         let sort = CurrentValueSubject<Sort, Never>(.name)
         let selected = CurrentValueSubject<[Core.Picture], Never>([])
         let info = CurrentValueSubject<[Info], Never>([])
@@ -38,6 +37,7 @@ final class Window: NSWindow, NSWindowDelegate {
         let hd = Camera(strategy: .hd)
         let zoom = CurrentValueSubject<Zoom, Never>(.grid)
         let animateOut = PassthroughSubject<Void, Never>()
+        let move = PassthroughSubject<(direction: Direction, multiple: Bool), Never>()
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -53,7 +53,7 @@ final class Window: NSWindow, NSWindowDelegate {
         addTitlebarAccessoryViewController(top)
         
         let bottom = NSTitlebarAccessoryViewController()
-        bottom.view = Subbar(selected: selected, zoom: zoom, clear: clear)
+        bottom.view = Subbar(selected: selected, zoom: zoom)
         bottom.layoutAttribute = .bottom
         bottom.view.frame.size.height = 50
         addTitlebarAccessoryViewController(bottom)
@@ -101,12 +101,6 @@ final class Window: NSWindow, NSWindowDelegate {
             .subscribe(sorted)
             .store(in: &subs)
         
-        clear
-            .sink {
-                selected.value = []
-            }
-            .store(in: &subs)
-        
         zoom
             .removeDuplicates()
             .combineLatest(info
@@ -121,7 +115,12 @@ final class Window: NSWindow, NSWindowDelegate {
                 } else {
                     switch new {
                     case .grid:
-                        view = Grid(info: info, selected: selected, clear: clear, zoom: zoom, animateOut: animateOut)
+                        view = Grid(
+                            info: info,
+                            selected: selected,
+                            zoom: zoom,
+                            animateOut: animateOut,
+                            move: move)
                         self?.present?.removeFromSuperview()
                     case .detail:
                         view = Detail(info: info, selected: selected, zoom: zoom)
@@ -163,6 +162,19 @@ final class Window: NSWindow, NSWindowDelegate {
                 detail.controller.navigateBack(nil)
             case 124:
                 detail.controller.navigateForward(nil)
+            default:
+                super.keyDown(with: with)
+            }
+        case let grid as Grid:
+            switch with.keyCode {
+            case 123:
+                grid.move.send((direction: .left, multiple: with.multiple))
+            case 124:
+                grid.move.send((direction: .right, multiple: with.multiple))
+            case 125:
+                grid.move.send((direction: .up, multiple: with.multiple))
+            case 126:
+                grid.move.send((direction: .down, multiple: with.multiple))
             default:
                 super.keyDown(with: with)
             }
