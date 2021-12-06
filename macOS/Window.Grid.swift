@@ -96,17 +96,7 @@ extension Window {
             click
                 .compactMap { [weak self] click in
                     self?
-                        .cells
-                        .first {
-                            $0
-                                .item
-                                .map {
-                                    $0
-                                        .rect
-                                        .contains(click.point)
-                                }
-                            ?? false
-                        }
+                        .cell(at: click.point)
                         .map {
                             (cell: $0, multiple: click.multiple)
                         }
@@ -131,22 +121,10 @@ extension Window {
             
             double
                 .compactMap { [weak self] point in
-                    self?
-                        .cells
-                        .first {
-                            $0
-                                .item
-                                .map {
-                                    $0
-                                        .rect
-                                        .contains(point)
-                                }
-                            ?? false
-                        }
+                    self?.cell(at: point)?.item
                 }
                 .sink {
-                    guard let info = $0.item?.info else { return }
-                    selected.value = [info.picture]
+                    selected.value = [$0.info.picture]
                     zoom.send(.detail)
                 }
                 .store(in: &subs)
@@ -177,6 +155,20 @@ extension Window {
             default:
                 click.send((point: point(with: with), multiple: with.multiple))
             }
+        }
+        
+        private func cell(at point: CGPoint) -> Cell? {
+            cells
+                .first {
+                    $0
+                        .item
+                        .map {
+                            $0
+                                .rect
+                                .contains(point)
+                        }
+                    ?? false
+                }
         }
         
         private func scrollTo(item: CollectionItem<Info>) {
