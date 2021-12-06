@@ -48,7 +48,7 @@ final class Window: NSWindow, NSWindowDelegate {
         content.addSubview(separator)
         
         let top = NSTitlebarAccessoryViewController()
-        top.view = Bar(url: url, info: info, selected: selected, sort: sort, zoom: zoom)
+        top.view = Bar(url: url, info: info, selected: selected, sort: sort, zoom: zoom, thumbnails: thumbnails)
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
         

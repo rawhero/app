@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CE3F538B275E2ACA00FB1509 /* Window.Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */; };
 		CE3F538D275E2CC600FB1509 /* NSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538C275E2CC600FB1509 /* NSEvent.swift */; };
+		CE3F538F275E66A300FB1509 /* Export.Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538E275E66A300FB1509 /* Export.Field.swift */; };
 		CE5B608C2754EA8700B48177 /* NSMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */; };
 		CE5B608D2754EA8700B48177 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B608B2754EA8700B48177 /* NSAttributedString.swift */; };
 		CE714C3C275D0E0F007E6F3E /* UNUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */; };
@@ -53,7 +54,7 @@
 		CEFA38762755355100C05C3B /* CollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA38712755355100C05C3B /* CollectionItem.swift */; };
 		CEFA38772755355100C05C3B /* CollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA38722755355100C05C3B /* CollectionCell.swift */; };
 		CEFA38782755355100C05C3B /* CollectionCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA38732755355100C05C3B /* CollectionCellState.swift */; };
-		CEFA387A275535C400C05C3B /* CollectionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA3879275535C400C05C3B /* CollectionImage.swift */; };
+		CEFA387A275535C400C05C3B /* LayerImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA3879275535C400C05C3B /* LayerImage.swift */; };
 		CEFA387C2755367F00C05C3B /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387B2755367F00C05C3B /* CGRect.swift */; };
 		CEFA38802755388B00C05C3B /* Window.Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387D2755388B00C05C3B /* Window.Grid.swift */; };
 		CEFA38812755388B00C05C3B /* Window.Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA387E2755388B00C05C3B /* Window.Info.swift */; };
@@ -63,6 +64,7 @@
 /* Begin PBXFileReference section */
 		CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.Direction.swift; sourceTree = "<group>"; };
 		CE3F538C275E2CC600FB1509 /* NSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSEvent.swift; sourceTree = "<group>"; };
+		CE3F538E275E66A300FB1509 /* Export.Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Export.Field.swift; sourceTree = "<group>"; };
 		CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMutableAttributedString.swift; sourceTree = "<group>"; };
 		CE5B608B2754EA8700B48177 /* NSAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
 		CE714C3B275D0E0F007E6F3E /* UNUserNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNUserNotificationCenter.swift; sourceTree = "<group>"; };
@@ -109,7 +111,7 @@
 		CEFA38712755355100C05C3B /* CollectionItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionItem.swift; sourceTree = "<group>"; };
 		CEFA38722755355100C05C3B /* CollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionCell.swift; sourceTree = "<group>"; };
 		CEFA38732755355100C05C3B /* CollectionCellState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionCellState.swift; sourceTree = "<group>"; };
-		CEFA3879275535C400C05C3B /* CollectionImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionImage.swift; sourceTree = "<group>"; };
+		CEFA3879275535C400C05C3B /* LayerImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerImage.swift; sourceTree = "<group>"; };
 		CEFA387B2755367F00C05C3B /* CGRect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
 		CEFA387D2755388B00C05C3B /* Window.Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Grid.swift; sourceTree = "<group>"; };
 		CEFA387E2755388B00C05C3B /* Window.Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.Info.swift; sourceTree = "<group>"; };
@@ -172,11 +174,11 @@
 				CEFA386F2755355100C05C3B /* Collection.swift */,
 				CEFA38722755355100C05C3B /* CollectionCell.swift */,
 				CEFA38732755355100C05C3B /* CollectionCellState.swift */,
-				CEFA3879275535C400C05C3B /* CollectionImage.swift */,
 				CEFA38712755355100C05C3B /* CollectionItem.swift */,
 				CEFA38702755355100C05C3B /* CollectionItemInfo.swift */,
 				CEF59EC02752857400B40DFB /* Control.State.swift */,
 				CEF59EBC2752857400B40DFB /* Control.swift */,
+				CE3F538E275E66A300FB1509 /* Export.Field.swift */,
 				CE714C3F275D1870007E6F3E /* Export.Item.swift */,
 				CE714C3D275D1430007E6F3E /* Export.swift */,
 				CEF59EBA2752857400B40DFB /* Flip.swift */,
@@ -186,8 +188,10 @@
 				CEA79E1127541F9900397B5E /* Launch.Item.swift */,
 				CEA8928B27527DE400D0603B /* Launch.swift */,
 				CEF59EC12752857400B40DFB /* Layer.swift */,
+				CEFA3879275535C400C05C3B /* LayerImage.swift */,
 				CEF59EDC2752A0E900B40DFB /* NSApplication.swift */,
 				CE5B608B2754EA8700B48177 /* NSAttributedString.swift */,
+				CE3F538C275E2CC600FB1509 /* NSEvent.swift */,
 				CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */,
 				CEF59EC22752857400B40DFB /* Plain.swift */,
 				CEF59EBD2752857400B40DFB /* Separator.swift */,
@@ -200,7 +204,6 @@
 				CEA07F932758FB1F00FF04CE /* Window.Detail.swift */,
 				CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */,
 				CEB04A9C275A4F5900DF17ED /* Window.Empty.swift */,
-				CE3F538C275E2CC600FB1509 /* NSEvent.swift */,
 				CEFA387F2755388B00C05C3B /* Window.Grid.Cell.swift */,
 				CEFA387D2755388B00C05C3B /* Window.Grid.swift */,
 				CEFA387E2755388B00C05C3B /* Window.Info.swift */,
@@ -297,6 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEA8928C27527DE400D0603B /* Launch.swift in Sources */,
+				CE3F538F275E66A300FB1509 /* Export.Field.swift in Sources */,
 				CEF59EC62752857400B40DFB /* Shape.swift in Sources */,
 				CEF59EC72752857400B40DFB /* Control.swift in Sources */,
 				CEFA387C2755367F00C05C3B /* CGRect.swift in Sources */,
@@ -340,7 +344,7 @@
 				CE714C3C275D0E0F007E6F3E /* UNUserNotificationCenter.swift in Sources */,
 				CE82EA142753B122007E24F3 /* Global.swift.swift in Sources */,
 				CEB04A9D275A4F5900DF17ED /* Window.Empty.swift in Sources */,
-				CEFA387A275535C400C05C3B /* CollectionImage.swift in Sources */,
+				CEFA387A275535C400C05C3B /* LayerImage.swift in Sources */,
 				CE8802A627569DBF00909C85 /* Bar.Sorting.swift in Sources */,
 				CEED0F972757CBDF0076CFBC /* Switch.swift in Sources */,
 			);

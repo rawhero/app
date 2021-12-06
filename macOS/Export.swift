@@ -11,8 +11,8 @@ final class Export: NSPanel {
         true
     }
     
-    init(items: [Core.Picture]) {
-        super.init(contentRect: .init(origin: .zero, size: .init(width: 400, height: 500)),
+    init(items: [Core.Picture], thumbnails: Camera) {
+        super.init(contentRect: .init(origin: .zero, size: .init(width: 480, height: 500)),
                    styleMask: [.borderless],
                    backing: .buffered,
                    defer: true)
@@ -22,6 +22,11 @@ final class Export: NSPanel {
         hasShadow = true
         animationBehavior = .alertPanel
         center()
+        
+        let items = items
+            .map {
+                Item(picture: $0, thumbnails: thumbnails)
+            }
         
         let blur = NSVisualEffectView()
         blur.translatesAutoresizingMaskIntoConstraints = false
@@ -73,7 +78,7 @@ final class Export: NSPanel {
         scroll.automaticallyAdjustsContentInsets = false
         blur.addSubview(scroll)
         
-        let stack = NSStackView(views: items.map(Item.init(picture:)))
+        let stack = NSStackView(views: items)
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.orientation = .vertical
         stack.spacing = 10

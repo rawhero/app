@@ -13,7 +13,8 @@ final class Bar: NSVisualEffectView {
         info: CurrentValueSubject<[Window.Info], Never>,
         selected: CurrentValueSubject<[Core.Picture], Never>,
         sort: CurrentValueSubject<Window.Sort, Never>,
-        zoom: CurrentValueSubject<Window.Zoom, Never>) {
+        zoom: CurrentValueSubject<Window.Zoom, Never>,
+        thumbnails: Camera) {
             self.zoom = zoom
             
             super.init(frame: .zero)
@@ -91,7 +92,7 @@ final class Bar: NSVisualEffectView {
                     let items = selected.value
                     guard !items.isEmpty else { return }
                     
-                    let export = Export(items: items)
+                    let export = Export(items: items, thumbnails: thumbnails)
                     self?.window?.addChildWindow(export, ordered: .above)
                     export.makeKey()
                 }

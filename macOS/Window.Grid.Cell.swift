@@ -6,7 +6,7 @@ extension Window.Grid {
         static let width = CGFloat(120)
         static let spacing = CGFloat(5)
         static let width_spacing = width + spacing
-        private(set) weak var image: CollectionImage!
+        private(set) weak var image: LayerImage!
         private weak var margin: Shape!
         private weak var gradient: Gradient!
         private var sub: AnyCancellable?
@@ -60,7 +60,7 @@ extension Window.Grid {
         required init?(coder: NSCoder) { nil }
         override init(layer: Any) { super.init(layer: layer) }
         required init() {
-            let image = CollectionImage()
+            let image = LayerImage()
             self.image = image
             
             let gradient = Gradient()

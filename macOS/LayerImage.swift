@@ -1,6 +1,6 @@
 import QuartzCore
 
-final class CollectionImage: CALayer {
+final class LayerImage: CALayer {
     required init?(coder: NSCoder) { nil }
     override init(layer: Any) { super.init(layer: layer) }
     override init() {

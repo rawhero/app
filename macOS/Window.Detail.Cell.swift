@@ -4,7 +4,7 @@ import Combine
 extension Window.Detail {
     final class Cell: NSView {
         var animate = true
-        private weak var image: CollectionImage!
+        private weak var image: LayerImage!
         private var sub: AnyCancellable?
         
         var info: Window.Info? {
@@ -43,8 +43,7 @@ extension Window.Detail {
         
         required init?(coder: NSCoder) { nil }
         required init() {
-            let image = CollectionImage()
-            image.contentsGravity = .resizeAspect
+            let image = LayerImage()
             self.image = image
             
             super.init(frame: .zero)
