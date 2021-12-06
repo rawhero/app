@@ -59,6 +59,7 @@ final class Bar: NSVisualEffectView {
                     alert.alertStyle = .warning
                     alert.icon = .init(systemSymbolName: "trash", accessibilityDescription: nil)
                     alert.messageText = items.count == 1 ? "Delete photo?" : "Delete photos?"
+                    alert.informativeText = items.count == 1 ? "Photo will be send to Trash" : "Photos will be send to Trash"
                     
                     let delete = alert.addButton(withTitle: "Delete")
                     let cancel = alert.addButton(withTitle: "Cancel")

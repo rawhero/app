@@ -6,12 +6,18 @@ import Core
 final class Export: NSPanel {
     private var monitor: Any?
     private var subs = Set<AnyCancellable>()
+    private let items: [Item]
     
     override var canBecomeKey: Bool {
         true
     }
     
     init(items: [Core.Picture], thumbnails: Camera) {
+        self.items = items
+            .map {
+                Item(picture: $0, thumbnails: thumbnails)
+            }
+        
         super.init(contentRect: .init(origin: .zero, size: .init(width: 480, height: 500)),
                    styleMask: [.borderless],
                    backing: .buffered,
@@ -22,11 +28,6 @@ final class Export: NSPanel {
         hasShadow = true
         animationBehavior = .alertPanel
         center()
-        
-        let items = items
-            .map {
-                Item(picture: $0, thumbnails: thumbnails)
-            }
         
         let blur = NSVisualEffectView()
         blur.translatesAutoresizingMaskIntoConstraints = false
@@ -47,7 +48,7 @@ final class Export: NSPanel {
         export
             .click
             .sink { [weak self] in
-//                self?.save()
+                self?.save()
             }
             .store(in: &subs)
         
@@ -78,7 +79,7 @@ final class Export: NSPanel {
         scroll.automaticallyAdjustsContentInsets = false
         blur.addSubview(scroll)
         
-        let stack = NSStackView(views: items)
+        let stack = NSStackView(views: self.items)
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.orientation = .vertical
         stack.spacing = 10
@@ -122,7 +123,7 @@ final class Export: NSPanel {
         
         monitor = NSEvent
             .addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .otherMouseDown]) { [weak self] event in
-                if self?.isVisible == true && event.window != self {
+                if self?.isVisible == true && event.window != self && !(event.window is NSOpenPanel) {
                     self?.close()
                 }
                 return event
@@ -132,8 +133,7 @@ final class Export: NSPanel {
     override func keyDown(with: NSEvent) {
         switch with.keyCode {
         case 36:
-            break
-//            save()
+            save()
         default:
             super.keyDown(with: with)
         }
@@ -157,5 +157,48 @@ final class Export: NSPanel {
         if with.clickCount == 1 {
             makeFirstResponder(nil)
         }
+    }
+    
+    private func save() {
+        makeFirstResponder(contentView)
+        
+        let browse = NSOpenPanel()
+        browse.canChooseFiles = false
+        browse.canChooseDirectories = true
+        browse.title = "Destination folder"
+        browse.prompt = "Save"
+
+        var stale = false
+        
+        guard
+            browse.runModal() == .OK,
+            let url = browse.url
+        else { return }
+
+        var urls = [URL]()
+        
+        items
+            .filter {
+                $0.result != nil
+            }
+            .forEach {
+                let temporal = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+                try? $0.result?.write(to: temporal, options: .atomic)
+                let name = $0.url.lastPathComponent.components(separatedBy: ".").dropLast().joined(separator: ".")
+                var path = url.appendingPathComponent(name + ".jpeg")
+                
+                if FileManager.default.fileExists(atPath: path.path) {
+                    path = url.appendingPathComponent(name + " " + Date().formatted(date: .numeric, time: .standard) + ".jpeg")
+                }
+                
+                if let result = try? FileManager.default.replaceItemAt(path, withItemAt: temporal) {
+                    urls.append(result)
+                }
+                
+                try? FileManager.default.removeItem(at: temporal)
+            }
+        
+        NSWorkspace.shared.activateFileViewerSelecting(urls)
+        close()
     }
 }

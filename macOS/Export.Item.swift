@@ -4,17 +4,21 @@ import Core
 
 extension Export {
     final class Item: NSView, NSTextFieldDelegate {
+        private(set) var result: Data?
         let url: URL
-        let exporter: CurrentValueSubject<Exporter, Never>
+        
         private weak var scale: Field!
         private weak var width: Field!
         private weak var height: Field!
         private var subs = Set<AnyCancellable>()
+        private let exporter: CurrentValueSubject<Exporter, Never>
         
         required init?(coder: NSCoder) { nil }
         init(picture: Core.Picture, thumbnails: Camera) {
             self.url = picture.id
             exporter = .init(.init(size: picture.size))
+            
+            let render = PassthroughSubject<Exporter, Never>()
             
             super.init(frame: .zero)
             translatesAutoresizingMaskIntoConstraints = false
@@ -31,7 +35,13 @@ extension Export {
             text.stringValue = picture.id.lastPathComponent
             text.font = .preferredFont(forTextStyle: .body)
             text.textColor = .secondaryLabelColor
+            text.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             addSubview(text)
+            
+            let size = Text(vibrancy: true)
+            size.font = .monospacedSystemFont(ofSize: NSFont.preferredFont(forTextStyle: .body).pointSize, weight: .regular)
+            size.textColor = .secondaryLabelColor
+            addSubview(size)
             
             let scaleTitle = Text(vibrancy: true)
             scaleTitle.stringValue = "Scale"
@@ -70,11 +80,21 @@ extension Export {
             self.height = height
             addSubview(height)
             
+            let transition = CATransition()
+            transition.timingFunction = .init(name: .easeInEaseOut)
+            transition.type = .push
+            transition.subtype = .fromTop
+            transition.duration = 0.25
+            
             widthAnchor.constraint(equalToConstant: 460).isActive = true
             heightAnchor.constraint(equalToConstant: 120).isActive = true
             
             text.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
             text.leftAnchor.constraint(equalTo: leftAnchor, constant: 120).isActive = true
+            text.rightAnchor.constraint(lessThanOrEqualTo: size.leftAnchor, constant: -10).isActive = true
+            
+            size.rightAnchor.constraint(equalTo: rightAnchor, constant: -10).isActive = true
+            size.centerYAnchor.constraint(equalTo: text.centerYAnchor).isActive = true
             
             scaleTitle.centerYAnchor.constraint(equalTo: scale.centerYAnchor).isActive = true
             scaleTitle.leftAnchor.constraint(equalTo: text.leftAnchor).isActive = true
@@ -117,12 +137,28 @@ extension Export {
                     .store(in: &subs)
             }
             
-            exporter
+            render
+                .debounce(for: .milliseconds(450), scheduler: DispatchQueue.global(qos: .utility))
                 .sink {
-                    slider.doubleValue = $0.scale
-                    scale.stringValue = $0.scale.formatted()
-                    width.stringValue = $0.width.formatted()
-                    height.stringValue = $0.height.formatted()
+                    let result = CGImage.generate(url: picture.id, exporter: $0)
+                    
+                    DispatchQueue
+                        .main
+                        .async { [weak self] in
+                            self?.result = result
+                            size.stringValue = result?.count.formatted(.byteCount(style: .file)) ?? ""
+                            size.layer?.add(transition, forKey: "transition")
+                        }
+                }
+                .store(in: &subs)
+            
+            exporter
+                .sink { exporter in
+                    slider.doubleValue = exporter.scale
+                    scale.stringValue = exporter.scale.formatted()
+                    width.stringValue = exporter.width.formatted()
+                    height.stringValue = exporter.height.formatted()
+                    render.send(exporter)
                 }
                 .store(in: &subs)
         }
