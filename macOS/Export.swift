@@ -167,8 +167,6 @@ final class Export: NSPanel {
         browse.canChooseDirectories = true
         browse.title = "Destination folder"
         browse.prompt = "Save"
-
-        var stale = false
         
         guard
             browse.runModal() == .OK,
