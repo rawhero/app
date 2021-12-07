@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CE1BE815275F7A3900C3AE3D /* NSMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1BE814275F7A3900C3AE3D /* NSMenuItem.swift */; };
+		CE1BE817275FA81100C3AE3D /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1BE816275FA81100C3AE3D /* Menu.swift */; };
 		CE3F538B275E2ACA00FB1509 /* Window.Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */; };
 		CE3F538D275E2CC600FB1509 /* NSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538C275E2CC600FB1509 /* NSEvent.swift */; };
 		CE3F538F275E66A300FB1509 /* Export.Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538E275E66A300FB1509 /* Export.Field.swift */; };
@@ -64,6 +65,7 @@
 
 /* Begin PBXFileReference section */
 		CE1BE814275F7A3900C3AE3D /* NSMenuItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMenuItem.swift; sourceTree = "<group>"; };
+		CE1BE816275FA81100C3AE3D /* Menu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.Direction.swift; sourceTree = "<group>"; };
 		CE3F538C275E2CC600FB1509 /* NSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSEvent.swift; sourceTree = "<group>"; };
 		CE3F538E275E66A300FB1509 /* Export.Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Export.Field.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				CEA8928B27527DE400D0603B /* Launch.swift */,
 				CEF59EC12752857400B40DFB /* Layer.swift */,
 				CEFA3879275535C400C05C3B /* LayerImage.swift */,
+				CE1BE816275FA81100C3AE3D /* Menu.swift */,
 				CEF59EDC2752A0E900B40DFB /* NSApplication.swift */,
 				CE5B608B2754EA8700B48177 /* NSAttributedString.swift */,
 				CE3F538C275E2CC600FB1509 /* NSEvent.swift */,
@@ -316,6 +319,7 @@
 				CEFA38762755355100C05C3B /* CollectionItem.swift in Sources */,
 				CEA79E1227541F9900397B5E /* Launch.Item.swift in Sources */,
 				CE3F538B275E2ACA00FB1509 /* Window.Direction.swift in Sources */,
+				CE1BE817275FA81100C3AE3D /* Menu.swift in Sources */,
 				CEFA38812755388B00C05C3B /* Window.Info.swift in Sources */,
 				CEF59ECC2752857400B40DFB /* Layer.swift in Sources */,
 				CEF59EC82752857400B40DFB /* Separator.swift in Sources */,

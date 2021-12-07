@@ -11,12 +11,12 @@ import Core
     }
     
     func applicationWillFinishLaunching(_: Notification) {
-//        mainMenu = Menu()
+        mainMenu = Menu()
         
         cloud
             .ready
             .notify(queue: .main) { [weak self] in
-                self?.launch()
+                self?.launching()
             }
     }
     
@@ -56,7 +56,7 @@ import Core
 //            .makeKeyAndOrderFront(nil)
     }
     
-    private func launch() {
+    private func launching() {
         Task {
             do {
                 let current = try await cloud.current

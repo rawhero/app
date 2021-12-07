@@ -29,19 +29,8 @@ final class Launch: NSWindow {
         open
             .click
             .sink { [weak self] in
-                guard let self = self else { return }
-                let browse = NSOpenPanel()
-                browse.canChooseFiles = false
-                browse.canChooseDirectories = true
-                browse.prompt = "Open folder"
-                browse.title = "Select a folder containing photos"
-                browse.beginSheetModal(for: self) { [weak self] in
-                    guard
-                        $0 == .OK,
-                        let url = browse.url
-                    else { return }
-                    self?.open(url: url)
-                }
+                self?.close()
+                NSApp.launch()
             }
             .store(in: &subs)
         
@@ -118,33 +107,26 @@ final class Launch: NSWindow {
         return item
     }
     
-    private func open(url: URL) {
-        Task {
-            guard
-                let open = try? await cloud.bookmark(url: url)
-            else {
-                Invalid().makeKeyAndOrderFront(nil)
-                return
-            }
-            
-            close()
-            
-            Window(bookmark: open.bookmark, url: open.url).makeKeyAndOrderFront(nil)
-        }
-    }
-    
     private func open(bookmark: Bookmark) {
         Task {
-            guard
-                let url = try? await cloud.open(bookmark: bookmark)
+            guard let opened = NSApp.window(id: bookmark.id)
             else {
-                Invalid().makeKeyAndOrderFront(nil)
+                guard
+                    let url = try? await cloud.open(bookmark: bookmark)
+                else {
+                    Invalid().makeKeyAndOrderFront(nil)
+                    return
+                }
+                
+                close()
+                
+                Window(bookmark: bookmark, url: url).makeKeyAndOrderFront(nil)
+                
                 return
             }
             
-            close()
-            
-            Window(bookmark: bookmark, url: url).makeKeyAndOrderFront(nil)
+            opened.makeKeyAndOrderFront(nil)
+            opened.center()
         }
     }
 }

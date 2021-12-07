@@ -4,10 +4,10 @@ import UserNotifications
 import Core
 
 final class Window: NSWindow, NSWindowDelegate {
+    let url: URL
+    let bookmark: Bookmark
     private weak var present: NSView?
     private var subs = Set<AnyCancellable>()
-    private let url: URL
-    private let bookmark: Bookmark
     
     init(bookmark: Bookmark, url: URL) {
         self.bookmark = bookmark

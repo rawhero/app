@@ -29,10 +29,5 @@ extension Export {
         override func cancelOperation(_: Any?) {
             window?.makeFirstResponder(nil)
         }
-        
-        override func becomeFirstResponder() -> Bool {
-            undoManager?.removeAllActions()
-            return super.becomeFirstResponder()
-        }
     }
 }
