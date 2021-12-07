@@ -34,6 +34,7 @@ final class Launch: NSWindow {
                 browse.canChooseFiles = false
                 browse.canChooseDirectories = true
                 browse.prompt = "Open folder"
+                browse.title = "Select a folder containing photos"
                 browse.beginSheetModal(for: self) { [weak self] in
                     guard
                         $0 == .OK,

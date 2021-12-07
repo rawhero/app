@@ -2,15 +2,42 @@ import AppKit
 import Combine
 
 class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
-    var selected = Set<Info.ID>()
-    var highlighted: Info.ID? = nil
+    var selected = Set<Info.ID>() {
+        didSet {
+            cells
+                .forEach { cell in
+                    cell.state = selected.contains { $0 == cell.item?.info.id } ? .pressed : .none
+                }
+        }
+    }
+    
+    var highlighted: Info.ID? = nil {
+        didSet {
+            if let highlighted = highlighted {
+                cells
+                    .filter {
+                        $0.state != .pressed && $0.state != .dragging
+                    }
+                    .forEach {
+                        $0.state = $0.item?.info.id == highlighted ? .highlighted : .none
+                    }
+            } else {
+                cells
+                    .filter {
+                        $0.state == .highlighted
+                    }
+                    .forEach {
+                        $0.state = .none
+                    }
+            }
+        }
+    }
+    
     final var subs = Set<AnyCancellable>()
     final var cells = Set<Cell>()
     final let render = PassthroughSubject<Void, Never>()
     final let items = PassthroughSubject<Set<CollectionItem<Info>>, Never>()
     final let size = PassthroughSubject<CGSize, Never>()
-    final let clear = PassthroughSubject<Void, Never>()
-    private let unhighlight = PassthroughSubject<Void, Never>()
     private let highlight = PassthroughSubject<CGPoint, Never>()
 
     required init?(coder: NSCoder) { nil }
@@ -109,6 +136,30 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
             .store(in: &subs)
         
         highlight
+            .filter { [weak self] _ in
+                self?.highlighted != nil
+            }
+            .map { [weak self] point in
+                self?
+                    .cells
+                    .first {
+                        $0
+                            .item
+                            .map {
+                                $0
+                                    .rect
+                                    .contains(point)
+                            }
+                        ?? false
+                    }
+            }
+            .filter { $0 == nil }
+            .sink { [weak self] _ in
+                self?.highlighted = nil
+            }
+            .store(in: &subs)
+        
+        highlight
             .compactMap { [weak self] point in
                 self?
                     .cells
@@ -126,49 +177,27 @@ class Collection<Cell, Info>: NSScrollView where Cell : CollectionCell<Info> {
             .sink { [weak self] in
                 guard let id = $0.item?.info.id else { return }
                 self?.highlighted = id
-                
-                self?
-                    .cells
-                    .filter {
-                        $0.state != .pressed && $0.state != .dragging
-                    }
-                    .forEach {
-                        $0.state = $0.item?.info.id == id ? .highlighted : .none
-                    }
-            }
-            .store(in: &subs)
-        
-        unhighlight
-            .sink { [weak self] in
-                self?.highlighted = nil
-                
-                self?
-                    .cells
-                    .filter {
-                        $0.state == .highlighted
-                    }
-                    .forEach {
-                        $0.state = .none
-                    }
-            }
-            .store(in: &subs)
-        
-        clear
-            .sink { [weak self] in
-                self?.selected = []
-                self?.highlighted = nil
-                
-                self?
-                    .cells
-                    .forEach {
-                        $0.state = .none
-                    }
             }
             .store(in: &subs)
     }
     
+    final func cell(at point: CGPoint) -> Cell? {
+        cells
+            .first {
+                $0
+                    .item
+                    .map {
+                        $0
+                            .rect
+                            .contains(point)
+                    }
+                ?? false
+            }
+    }
+    
     final override func mouseExited(with: NSEvent) {
-        unhighlight.send()
+        guard highlighted != nil else { return }
+        highlighted = nil
     }
     
     final override func mouseMoved(with: NSEvent) {

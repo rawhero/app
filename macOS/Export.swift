@@ -183,14 +183,14 @@ final class Export: NSPanel {
                 let temporal = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
                 try? $0.result?.write(to: temporal, options: .atomic)
                 let name = $0.url.lastPathComponent.components(separatedBy: ".").dropLast().joined(separator: ".")
-                var path = url.appendingPathComponent(name + ".jpeg")
+                var path = url.appendingPathComponent(name + ".jpg")
                 
                 if FileManager.default.fileExists(atPath: path.path) {
                     path = url.appendingPathComponent(name + " " + Date().formatted(date: .numeric, time: .standard) + ".jpeg")
                 }
                 
                 if let result = try? FileManager.default.replaceItemAt(path, withItemAt: temporal) {
-                    urls.append(result)
+                    urls.append(result.absoluteURL)
                 }
                 
                 try? FileManager.default.removeItem(at: temporal)

@@ -1,6 +1,5 @@
 import AppKit
 import Combine
-import UserNotifications
 import Core
 
 final class Bar: NSVisualEffectView {
@@ -14,7 +13,9 @@ final class Bar: NSVisualEffectView {
         selected: CurrentValueSubject<[Core.Picture], Never>,
         sort: CurrentValueSubject<Window.Sort, Never>,
         zoom: CurrentValueSubject<Window.Zoom, Never>,
-        thumbnails: Camera) {
+        trash: PassthroughSubject<[Core.Picture], Never>,
+        share: PassthroughSubject<[Core.Picture], Never>,
+        reload: PassthroughSubject<Void, Never>) {
             self.zoom = zoom
             
             super.init(frame: .zero)
@@ -22,6 +23,13 @@ final class Bar: NSVisualEffectView {
             material = .menu
             
             let title = Text(vibrancy: true)
+            
+            let refresh = Option(icon: "arrow.clockwise", size: 13)
+            refresh.toolTip = "Refresh"
+            refresh
+                .click
+                .subscribe(reload)
+                .store(in: &subs)
             
             let sorting = Option(icon: "arrow.up.arrow.down", size: 13)
             sorting.toolTip = "Order photos by"
@@ -54,34 +62,7 @@ final class Bar: NSVisualEffectView {
                 .sink {
                     let items = selected.value
                     guard !items.isEmpty else { return }
-                    
-                    let alert = NSAlert()
-                    alert.alertStyle = .warning
-                    alert.icon = .init(systemSymbolName: "trash", accessibilityDescription: nil)
-                    alert.messageText = items.count == 1 ? "Delete photo?" : "Delete photos?"
-                    alert.informativeText = items.count == 1 ? "Photo will be send to Trash" : "Photos will be send to Trash"
-                    
-                    let delete = alert.addButton(withTitle: "Delete")
-                    let cancel = alert.addButton(withTitle: "Cancel")
-                    delete.keyEquivalent = "\r"
-                    cancel.keyEquivalent = "\u{1b}"
-                    if alert.runModal().rawValue == delete.tag {
-                        selected.send([])
-                        info.value = info
-                            .value
-                            .filter {
-                                !items.contains($0.picture)
-                            }
-                        
-                        items
-                            .forEach {
-                                try? FileManager.default.trashItem(at: $0.id, resultingItemURL: nil)
-                            }
-                        
-                        Task {
-                            await UNUserNotificationCenter.send(message: items.count == 1 ? "Delete photo!" : "Deleted photos!")
-                        }
-                    }
+                    trash.send(items)
                 }
                 .store(in: &subs)
             
@@ -89,17 +70,14 @@ final class Bar: NSVisualEffectView {
             export.toolTip = "Export"
             export
                 .click
-                .sink { [weak self] in
+                .sink {
                     let items = selected.value
                     guard !items.isEmpty else { return }
-                    
-                    let export = Export(items: items, thumbnails: thumbnails)
-                    self?.window?.addChildWindow(export, ordered: .above)
-                    export.makeKey()
+                    share.send(items)
                 }
                 .store(in: &subs)
             
-            let left = NSStackView(views: [title, sorting, zooming])
+            let left = NSStackView(views: [title, refresh, sorting, zooming])
             left.translatesAutoresizingMaskIntoConstraints = false
             left.spacing = 16
             addSubview(left)
@@ -111,8 +89,11 @@ final class Bar: NSVisualEffectView {
             left.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 10).isActive = true
             left.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
             
-            right.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10).isActive = true
             right.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+            right.leftAnchor.constraint(greaterThanOrEqualTo: left.rightAnchor, constant: 20).isActive = true
+            let rightAlign = right.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10)
+            rightAlign.priority = .defaultLow
+            rightAlign.isActive = true
             
             info
                 .map {

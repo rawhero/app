@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE1BE815275F7A3900C3AE3D /* NSMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1BE814275F7A3900C3AE3D /* NSMenuItem.swift */; };
 		CE3F538B275E2ACA00FB1509 /* Window.Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */; };
 		CE3F538D275E2CC600FB1509 /* NSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538C275E2CC600FB1509 /* NSEvent.swift */; };
 		CE3F538F275E66A300FB1509 /* Export.Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3F538E275E66A300FB1509 /* Export.Field.swift */; };
@@ -62,6 +63,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CE1BE814275F7A3900C3AE3D /* NSMenuItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMenuItem.swift; sourceTree = "<group>"; };
 		CE3F538A275E2ACA00FB1509 /* Window.Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.Direction.swift; sourceTree = "<group>"; };
 		CE3F538C275E2CC600FB1509 /* NSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSEvent.swift; sourceTree = "<group>"; };
 		CE3F538E275E66A300FB1509 /* Export.Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Export.Field.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				CEF59EDC2752A0E900B40DFB /* NSApplication.swift */,
 				CE5B608B2754EA8700B48177 /* NSAttributedString.swift */,
 				CE3F538C275E2CC600FB1509 /* NSEvent.swift */,
+				CE1BE814275F7A3900C3AE3D /* NSMenuItem.swift */,
 				CE5B608A2754EA8700B48177 /* NSMutableAttributedString.swift */,
 				CEF59EC22752857400B40DFB /* Plain.swift */,
 				CEF59EBD2752857400B40DFB /* Separator.swift */,
@@ -332,6 +335,7 @@
 				CEF59ED127528E3100B40DFB /* Window.swift in Sources */,
 				CEA07F922758F11A00FF04CE /* Window.Zoom.swift in Sources */,
 				CEFA38752755355100C05C3B /* CollectionItemInfo.swift in Sources */,
+				CE1BE815275F7A3900C3AE3D /* NSMenuItem.swift in Sources */,
 				CEF59ECB2752857400B40DFB /* Control.State.swift in Sources */,
 				CEFA38782755355100C05C3B /* CollectionCellState.swift in Sources */,
 				CEED0F95275791DF0076CFBC /* Subbar.swift in Sources */,

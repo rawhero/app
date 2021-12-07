@@ -3,21 +3,30 @@ import Combine
 import Core
 
 extension Window {
-    final class Detail: NSView, NSPageControllerDelegate {
+    final class Detail: NSView, NSPageControllerDelegate, NSMenuDelegate {
         let controller = NSPageController()
         private weak var selected: CurrentValueSubject<[Core.Picture], Never>!
         private weak var zoom: CurrentValueSubject<Zoom, Never>!
+        private weak var trash: PassthroughSubject<[Core.Picture], Never>!
+        private weak var share: PassthroughSubject<[Core.Picture], Never>!
         private var subs = Set<AnyCancellable>()
         
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>,
              selected: CurrentValueSubject<[Core.Picture], Never>,
-             zoom: CurrentValueSubject<Zoom, Never>) {
+             zoom: CurrentValueSubject<Zoom, Never>,
+             trash: PassthroughSubject<[Core.Picture], Never>,
+             share: PassthroughSubject<[Core.Picture], Never>) {
             
             self.selected = selected
             self.zoom = zoom
+            self.trash = trash
+            self.share = share
             
             super.init(frame: .zero)
+            menu = .init()
+            menu!.delegate = self
+            
             translatesAutoresizingMaskIntoConstraints = false
             controller.delegate = self
             controller.transitionStyle = .horizontalStrip
@@ -82,6 +91,32 @@ extension Window {
             }
         }
         
+        func menuNeedsUpdate(_ menu: NSMenu) {
+            var items = [NSMenuItem]()
+            
+            if !selected.value.isEmpty {
+                items += [
+                    .child("Show in Finder", #selector(showInFinder)) {
+                        $0.target = self
+                    },
+                    .separator(),
+                    .child("Zoom out", #selector(zoomHighlighted)) {
+                        $0.target = self
+                    },
+                    .separator(),
+                    .child("Export", #selector(exportSelected)) {
+                        $0.target = self
+                    },
+                    .separator(),
+                    .child("Delete", #selector(deleteSelected)) {
+                        $0.target = self
+                    },
+                    .separator()]
+            }
+            
+            menu.items = items
+        }
+        
         override var frame: NSRect {
             didSet {
                 controller
@@ -104,6 +139,25 @@ extension Window {
             default:
                 super.mouseUp(with: with)
             }
+        }
+        
+        @objc private func showInFinder() {
+            guard let picture = selected.value.first else { return }
+            NSWorkspace.shared.activateFileViewerSelecting([picture.id.absoluteURL])
+        }
+        
+        @objc private func exportSelected() {
+            guard let picture = selected.value.first else { return }
+            share.send([picture])
+        }
+        
+        @objc private func deleteSelected() {
+            guard let picture = selected.value.first else { return }
+            trash.send([picture])
+        }
+        
+        @objc private func zoomHighlighted() {
+            zoom.send(.grid)
         }
     }
 }

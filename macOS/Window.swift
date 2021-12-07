@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import UserNotifications
 import Core
 
 final class Window: NSWindow, NSWindowDelegate {
@@ -28,7 +29,7 @@ final class Window: NSWindow, NSWindowDelegate {
         titlebarAppearsTransparent = true
         delegate = self
         
-        let pictures = PassthroughSubject<Set<Core.Picture>, Never>()
+        let pictures = CurrentValueSubject<Set<Core.Picture>, Never>([])
         let sorted = PassthroughSubject<[Core.Picture], Never>()
         let sort = CurrentValueSubject<Sort, Never>(.name)
         let selected = CurrentValueSubject<[Core.Picture], Never>([])
@@ -38,6 +39,9 @@ final class Window: NSWindow, NSWindowDelegate {
         let zoom = CurrentValueSubject<Zoom, Never>(.grid)
         let animateOut = PassthroughSubject<Void, Never>()
         let move = PassthroughSubject<(date: Date, direction: Direction, multiple: Bool), Never>()
+        let trash = PassthroughSubject<[Core.Picture], Never>()
+        let share = PassthroughSubject<[Core.Picture], Never>()
+        let reload = PassthroughSubject<Void, Never>()
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -48,7 +52,15 @@ final class Window: NSWindow, NSWindowDelegate {
         content.addSubview(separator)
         
         let top = NSTitlebarAccessoryViewController()
-        top.view = Bar(url: url, info: info, selected: selected, sort: sort, zoom: zoom, thumbnails: thumbnails)
+        top.view = Bar(
+            url: url,
+            info: info,
+            selected: selected,
+            sort: sort,
+            zoom: zoom,
+            trash: trash,
+            share: share,
+            reload: reload)
         top.layoutAttribute = .top
         addTitlebarAccessoryViewController(top)
         
@@ -78,6 +90,7 @@ final class Window: NSWindow, NSWindowDelegate {
             .store(in: &subs)
         
         pictures
+            .removeDuplicates()
             .combineLatest(sort)
             .map { pictures, sort in
                 switch sort {
@@ -120,10 +133,17 @@ final class Window: NSWindow, NSWindowDelegate {
                             selected: selected,
                             zoom: zoom,
                             animateOut: animateOut,
-                            move: move)
+                            move: move,
+                            trash: trash,
+                            share: share)
                         self?.present?.removeFromSuperview()
                     case .detail:
-                        view = Detail(info: info, selected: selected, zoom: zoom)
+                        view = Detail(
+                            info: info,
+                            selected: selected,
+                            zoom: zoom,
+                            trash: trash,
+                            share: share)
                         
                         if self?.present != nil {
                             self?.present = view
@@ -141,6 +161,57 @@ final class Window: NSWindow, NSWindowDelegate {
                 view.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
                 view.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
                 view.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
+            }
+            .store(in: &subs)
+        
+        trash
+            .sink { items in
+                let alert = NSAlert()
+                alert.alertStyle = .warning
+                alert.icon = .init(systemSymbolName: "trash", accessibilityDescription: nil)
+                alert.messageText = items.count == 1 ? "Delete photo?" : "Delete photos?"
+                alert.informativeText = items.count == 1 ? "Photo will be send to Trash" : "Photos will be send to Trash"
+                
+                let delete = alert.addButton(withTitle: "Delete")
+                let cancel = alert.addButton(withTitle: "Cancel")
+                delete.keyEquivalent = "\r"
+                cancel.keyEquivalent = "\u{1b}"
+                if alert.runModal().rawValue == delete.tag {
+                    selected.send([])
+                    pictures.value = pictures
+                        .value
+                        .filter {
+                            !items.contains($0)
+                        }
+                    
+                    items
+                        .forEach {
+                            try? FileManager.default.trashItem(at: $0.id, resultingItemURL: nil)
+                        }
+                    
+                    Task {
+                        await UNUserNotificationCenter.send(message: items.count == 1 ? "Delete photo!" : "Deleted photos!")
+                    }
+                }
+            }
+            .store(in: &subs)
+        
+        share
+            .sink { [weak self] in
+                let export = Export(items: $0, thumbnails: thumbnails)
+                self?.addChildWindow(export, ordered: .above)
+                export.makeKey()
+            }
+            .store(in: &subs)
+        
+        reload
+            .sink {
+                selected.send([])
+                pictures.send(FileManager.default.pictures(at: url))
+                
+                Task {
+                    await UNUserNotificationCenter.send(message: "Refreshed folder!")
+                }
             }
             .store(in: &subs)
         

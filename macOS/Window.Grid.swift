@@ -3,21 +3,28 @@ import Combine
 import Core
 
 extension Window {
-    final class Grid: Collection<Grid.Cell, Info> {
+    final class Grid: Collection<Grid.Cell, Info>, NSMenuDelegate {
         private(set) weak var move: PassthroughSubject<(date: Date, direction: Direction, multiple: Bool), Never>!
         private let click = PassthroughSubject<(point: CGPoint, multiple: Bool), Never>()
         private let double = PassthroughSubject<CGPoint, Never>()
+        private let export = PassthroughSubject<[Info.ID], Never>()
+        private let delete = PassthroughSubject<[Info.ID], Never>()
+        private let zooming = PassthroughSubject<Info.ID, Never>()
         
         required init?(coder: NSCoder) { nil }
         init(info: CurrentValueSubject<[Info], Never>,
              selected: CurrentValueSubject<[Core.Picture], Never>,
              zoom: CurrentValueSubject<Zoom, Never>,
              animateOut: PassthroughSubject<Void, Never>,
-             move: PassthroughSubject<(date: Date, direction: Direction, multiple: Bool), Never>) {
+             move: PassthroughSubject<(date: Date, direction: Direction, multiple: Bool), Never>,
+             trash: PassthroughSubject<[Core.Picture], Never>,
+             share: PassthroughSubject<[Core.Picture], Never>) {
             
             self.move = move
             
             super.init(active: .activeInKeyWindow)
+            menu = .init()
+            menu!.delegate = self
             scrollerInsets.top = 5
             scrollerInsets.bottom = 5
             
@@ -93,6 +100,20 @@ extension Window {
                 .store(in: &subs)
             
             click
+                .map { [weak self] click in
+                    self?
+                        .cell(at: click.point)
+                        .map {
+                            (cell: $0, multiple: click.multiple)
+                        }
+                }
+                .filter { $0 == nil }
+                .sink { _ in
+                    selected.send([])
+                }
+                .store(in: &subs)
+            
+            click
                 .compactMap { [weak self] click in
                     self?
                         .cell(at: click.point)
@@ -138,11 +159,6 @@ extension Window {
             selected
                 .sink { [weak self] selected in
                     self?.selected = .init(selected.map(\.id.absoluteString))
-                    self?
-                        .cells
-                        .forEach { cell in
-                            cell.state = selected.contains { $0.id == cell.item?.info.picture.id } ? .pressed : .none
-                        }
                 }
                 .store(in: &subs)
             
@@ -176,6 +192,44 @@ extension Window {
                     }
                 }
                 .store(in: &subs)
+            
+            export
+                .sink {
+                    share.send(
+                        $0
+                            .compactMap { id in
+                                info
+                                    .value
+                                    .first {
+                                        $0.id == id
+                                    }?
+                                    .picture
+                            })
+                }
+                .store(in: &subs)
+            
+            zooming
+                .sink { id in
+                    guard let picture = info.value.first(where: { $0.id == id })?.picture else { return }
+                    selected.send([picture])
+                    zoom.send(.detail)
+                }
+                .store(in: &subs)
+            
+            delete
+                .sink {
+                    trash.send(
+                        $0
+                            .compactMap { id in
+                                info
+                                    .value
+                                    .first {
+                                        $0.id == id
+                                    }?
+                                    .picture
+                            })
+                }
+                .store(in: &subs)
         }
         
         override func mouseUp(with: NSEvent) {
@@ -189,18 +243,30 @@ extension Window {
             }
         }
         
-        private func cell(at point: CGPoint) -> Cell? {
-            cells
-                .first {
-                    $0
-                        .item
-                        .map {
-                            $0
-                                .rect
-                                .contains(point)
-                        }
-                    ?? false
-                }
+        func menuNeedsUpdate(_ menu: NSMenu) {
+            var items = [NSMenuItem]()
+            
+            if highlighted != nil {
+                items += [
+                    .child("Show in Finder", #selector(showInFinder)) {
+                        $0.target = self
+                    },
+                    .separator(),
+                    .child("Zoom in", #selector(zoomHighlighted)) {
+                        $0.target = self
+                    },
+                    .separator(),
+                    .child("Export", #selector(exportSelected)) {
+                        $0.target = self
+                    },
+                    .separator(),
+                    .child("Delete", #selector(deleteSelected)) {
+                        $0.target = self
+                    },
+                    .separator()]
+            }
+            
+            menu.items = items
         }
         
         private func scrollTo(item: CollectionItem<Info>, animate: Bool) {
@@ -293,6 +359,28 @@ extension Window {
         private func animatedOut() {
             (window as? Window)?.animatedOut()
             removeFromSuperview()
+        }
+        
+        @objc private func showInFinder() {
+            guard let highlighted = highlighted else { return }
+            NSWorkspace.shared.activateFileViewerSelecting((selected + [highlighted])
+                                                            .compactMap(URL.init(string:))
+                                                            .map(\.absoluteURL))
+        }
+        
+        @objc private func exportSelected() {
+            guard let highlighted = highlighted else { return }
+            export.send(selected + [highlighted])
+        }
+        
+        @objc private func deleteSelected() {
+            guard let highlighted = highlighted else { return }
+            delete.send(selected + [highlighted])
+        }
+        
+        @objc private func zoomHighlighted() {
+            guard let highlighted = highlighted else { return }
+            zooming.send(highlighted)
         }
     }
 }
