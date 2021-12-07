@@ -47,10 +47,12 @@ extension Window.Detail {
             self.image = image
             
             super.init(frame: .zero)
-            layer = Layer()
             wantsLayer = true
-            layer!.backgroundColor = NSColor.controlBackgroundColor.cgColor
             layer!.addSublayer(image)
+        }
+        
+        override func updateLayer() {
+            layer!.backgroundColor = NSColor.controlBackgroundColor.cgColor
         }
     }
 }

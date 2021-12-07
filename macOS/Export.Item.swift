@@ -21,9 +21,7 @@ extension Export {
             
             super.init(frame: .zero)
             translatesAutoresizingMaskIntoConstraints = false
-            layer = Layer()
             wantsLayer = true
-            layer!.backgroundColor = NSColor.labelColor.withAlphaComponent(0.05).cgColor
             layer!.cornerRadius = 8
             
             let image = LayerImage()
@@ -215,6 +213,10 @@ extension Export {
             default:
                 break
             }
+        }
+        
+        override func updateLayer() {
+            layer!.backgroundColor = NSColor.labelColor.withAlphaComponent(0.05).cgColor
         }
         
         @objc private func change(_ segmented: NSSegmentedControl) {
