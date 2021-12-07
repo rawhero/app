@@ -140,7 +140,7 @@ extension Export {
             scale.rightAnchor.constraint(equalTo: rightAnchor, constant: -15).isActive = true
             
             sliderScale.centerYAnchor.constraint(equalTo: scale.centerYAnchor).isActive = true
-            sliderScale.leftAnchor.constraint(equalTo: scaleTitle.rightAnchor, constant: 10).isActive = true
+            sliderScale.leftAnchor.constraint(equalTo: scaleTitle.rightAnchor, constant: 15).isActive = true
             sliderScale.rightAnchor.constraint(equalTo: scale.leftAnchor, constant: -10).isActive = true
             
             widthTitle.centerYAnchor.constraint(equalTo: width.centerYAnchor).isActive = true
@@ -193,9 +193,9 @@ extension Export {
                 .sink { exporter in
                     sliderScale.doubleValue = exporter.scale
                     sliderQuality.doubleValue = exporter.quality
-                    scale.stringValue = exporter.scale.formatted()
-                    width.stringValue = exporter.width.formatted()
-                    height.stringValue = exporter.height.formatted()
+                    scale.stringValue = "\(exporter.scale)"
+                    width.stringValue = "\(exporter.width)"
+                    height.stringValue = "\(exporter.height)"
                     quality.stringValue = exporter.quality.formatted(.percent)
                     mode.selectedSegment = exporter.mode.rawValue
                     size.stringValue = "..."
