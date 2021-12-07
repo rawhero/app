@@ -77,9 +77,9 @@ final class Bar: NSVisualEffectView {
                 }
                 .store(in: &subs)
             
-            let left = NSStackView(views: [title, refresh, sorting, zooming])
+            let left = NSStackView(views: [title, zooming, refresh, sorting])
             left.translatesAutoresizingMaskIntoConstraints = false
-            left.spacing = 16
+            left.setCustomSpacing(20, after: title)
             addSubview(left)
             
             let right = NSStackView(views: [delete, export])
@@ -122,6 +122,7 @@ final class Bar: NSVisualEffectView {
             
             zoom
                 .sink {
+                    sorting.state = $0 == .grid ? .on : .hidden
                     zooming.selectedSegment = $0.rawValue
                 }
                 .store(in: &subs)
@@ -132,8 +133,7 @@ final class Bar: NSVisualEffectView {
                 }
                 .removeDuplicates()
                 .sink {
-                    delete.state = $0 ? .hidden : .on
-                    export.state = $0 ? .hidden : .on
+                    right.animator().isHidden = $0
                 }
                 .store(in: &subs)
         }

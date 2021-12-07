@@ -66,9 +66,7 @@ final class Subbar: NSVisualEffectView {
         
         selected
             .removeDuplicates()
-            .combineLatest(zoom
-                            .removeDuplicates())
-            .sink { selected, zoom in
+            .sink { selected in
                 switch selected.count {
                 case 0:
                     single.isHidden = true
@@ -143,7 +141,6 @@ final class Subbar: NSVisualEffectView {
                     
                     single.isHidden = false
                     multiple.isHidden = true
-                    clearing.state = zoom == .grid ? .on : .hidden
                     
                     count.attributedStringValue = .init()
                 default:
@@ -160,7 +157,6 @@ final class Subbar: NSVisualEffectView {
                     
                     single.isHidden = true
                     multiple.isHidden = false
-                    clearing.state = zoom == .grid ? .on : .hidden
                     
                     name.stringValue = ""
                     date.attributedStringValue = .init()
@@ -168,6 +164,18 @@ final class Subbar: NSVisualEffectView {
                     speed.attributedStringValue = .init()
                     size.attributedStringValue = .init()
                 }
+            }
+            .store(in: &subs)
+        
+        selected
+            .map {
+                $0.isEmpty
+            }
+            .removeDuplicates()
+            .combineLatest(zoom
+                            .removeDuplicates())
+            .sink { empty, zoom in
+                clearing.state = zoom == .grid && !empty ? .on : .hidden
             }
             .store(in: &subs)
         
