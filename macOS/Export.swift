@@ -180,13 +180,14 @@ final class Export: NSPanel {
                 $0.result != nil
             }
             .forEach {
+                let ext = ".\($0.exporter.value.mode)"
                 let temporal = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
                 try? $0.result?.write(to: temporal, options: .atomic)
                 let name = $0.url.lastPathComponent.components(separatedBy: ".").dropLast().joined(separator: ".")
-                var path = url.appendingPathComponent(name + ".jpg")
+                var path = url.appendingPathComponent(name + ext)
                 
                 if FileManager.default.fileExists(atPath: path.path) {
-                    path = url.appendingPathComponent(name + " " + Date().formatted(date: .numeric, time: .standard) + ".jpeg")
+                    path = url.appendingPathComponent(name + " " + Date().formatted(date: .numeric, time: .standard) + ext)
                 }
                 
                 if let result = try? FileManager.default.replaceItemAt(path, withItemAt: temporal) {
@@ -196,7 +197,10 @@ final class Export: NSPanel {
                 try? FileManager.default.removeItem(at: temporal)
             }
         
-        NSWorkspace.shared.activateFileViewerSelecting(urls)
         close()
+        
+        DispatchQueue.main.async {
+            NSWorkspace.shared.activateFileViewerSelecting(urls)
+        }
     }
 }

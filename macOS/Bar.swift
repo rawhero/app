@@ -138,7 +138,7 @@ final class Bar: NSVisualEffectView {
                 .store(in: &subs)
         }
     
-    @objc private func change(_ segemented: NSSegmentedControl) {
-        zoom.send(.init(rawValue: segemented.selectedSegment)!)
+    @objc private func change(_ segmented: NSSegmentedControl) {
+        zoom.send(.init(rawValue: segmented.selectedSegment)!)
     }
 }
