@@ -138,7 +138,7 @@ extension Export {
             }
             
             render
-                .debounce(for: .milliseconds(450), scheduler: DispatchQueue.global(qos: .utility))
+                .debounce(for: .milliseconds(450), scheduler: Camera.Pub.queues.randomElement()!)
                 .sink {
                     let result = CGImage.generate(url: picture.id, exporter: $0)
                     
