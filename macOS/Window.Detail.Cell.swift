@@ -10,6 +10,7 @@ extension Window.Detail {
         var info: Window.Info? {
             didSet {
                 guard let info = info else { return }
+                image.contents = nil
                 sub = info
                     .hd
                     .sink { [weak self] in

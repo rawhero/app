@@ -177,7 +177,22 @@ final class Window: NSWindow, NSWindowDelegate {
                 delete.keyEquivalent = "\r"
                 cancel.keyEquivalent = "\u{1b}"
                 if alert.runModal().rawValue == delete.tag {
-                    selected.send([])
+                    
+                    if let current = selected.value.first,
+                       zoom.value == .detail,
+                       info.value.count > 1,
+                       let index = info
+                        .value
+                        .firstIndex(where: {
+                            $0.picture.id == current.id
+                        }) {
+                        
+                        selected.send([info.value[index + (index < info.value.count - 1 ? 1 : -1)].picture])
+                        
+                    } else {
+                        selected.send([])
+                    }
+                    
                     pictures.value = pictures
                         .value
                         .filter {
