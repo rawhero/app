@@ -21,15 +21,17 @@ import Core
     }
     
     func applicationDidFinishLaunching(_: Notification) {
-//        switch Defaults.action {
-//        case .rate:
-//            SKStoreReviewController.requestReview()
-//        case .froob:
-//            (NSApp.anyWindow() ?? Froob())
-//                .makeKeyAndOrderFront(nil)
-//        case .none:
-//            break
-//        }
+        switch Defaults.action {
+        case .rate:
+            SKStoreReviewController.requestReview()
+        case .froob:
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                (NSApp.anyWindow() ?? Froob())
+                    .makeKeyAndOrderFront(nil)
+            }
+        case .none:
+            break
+        }
 
         registerForRemoteNotifications()
         UNUserNotificationCenter.current().delegate = self

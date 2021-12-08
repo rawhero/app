@@ -25,7 +25,7 @@ final class Window: NSWindow, NSWindowDelegate {
         animationBehavior = .documentWindow
         isReleasedWhenClosed = false
         center()
-//        setFrameAutosaveName("Window")
+        setFrameAutosaveName("Window")
         titlebarAppearsTransparent = true
         delegate = self
         
