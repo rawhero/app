@@ -43,6 +43,11 @@
 		CEA8928227527AA000D0603B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8928127527AA000D0603B /* Assets.xcassets */; };
 		CEA8928C27527DE400D0603B /* Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA8928B27527DE400D0603B /* Launch.swift */; };
 		CEB04A9D275A4F5900DF17ED /* Window.Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB04A9C275A4F5900DF17ED /* Window.Empty.swift */; };
+		CEC21EEE2760E658006092AF /* About.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC21EED2760E658006092AF /* About.swift */; };
+		CEC21EF32760E66E006092AF /* Froob.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC21EEF2760E66E006092AF /* Froob.swift */; };
+		CEC21EF42760E66E006092AF /* Info.Policy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC21EF02760E66E006092AF /* Info.Policy.swift */; };
+		CEC21EF52760E66E006092AF /* Froob.Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC21EF12760E66E006092AF /* Froob.Action.swift */; };
+		CEC21EF62760E66E006092AF /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC21EF22760E66E006092AF /* Info.swift */; };
 		CECFC37C2753E8B900CE985C /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CECFC37B2753E8B900CE985C /* StoreKit.framework */; };
 		CEED0F95275791DF0076CFBC /* Subbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEED0F94275791DF0076CFBC /* Subbar.swift */; };
 		CEED0F972757CBDF0076CFBC /* Switch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEED0F962757CBDF0076CFBC /* Switch.swift */; };
@@ -114,6 +119,11 @@
 		CEA8928A27527CE600D0603B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CEA8928B27527DE400D0603B /* Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Launch.swift; sourceTree = "<group>"; };
 		CEB04A9C275A4F5900DF17ED /* Window.Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.Empty.swift; sourceTree = "<group>"; };
+		CEC21EED2760E658006092AF /* About.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = About.swift; sourceTree = "<group>"; };
+		CEC21EEF2760E66E006092AF /* Froob.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Froob.swift; sourceTree = "<group>"; };
+		CEC21EF02760E66E006092AF /* Info.Policy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Info.Policy.swift; sourceTree = "<group>"; };
+		CEC21EF12760E66E006092AF /* Froob.Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Froob.Action.swift; sourceTree = "<group>"; };
+		CEC21EF22760E66E006092AF /* Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		CECFC37B2753E8B900CE985C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CEED0F94275791DF0076CFBC /* Subbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subbar.swift; sourceTree = "<group>"; };
 		CEED0F962757CBDF0076CFBC /* Switch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switch.swift; sourceTree = "<group>"; };
@@ -191,6 +201,7 @@
 			children = (
 				CEA8928627527AA000D0603B /* macOS.entitlements */,
 				CEA8928A27527CE600D0603B /* Info.plist */,
+				CEC21EED2760E658006092AF /* About.swift */,
 				CEF59EB82752857400B40DFB /* Action.swift */,
 				CEA8927D27527A9F00D0603B /* App.swift */,
 				CE8802A1275697A000909C85 /* Bar.Option.swift */,
@@ -209,8 +220,12 @@
 				CE714C3F275D1870007E6F3E /* Export.Item.swift */,
 				CE714C3D275D1430007E6F3E /* Export.swift */,
 				CEF59EBA2752857400B40DFB /* Flip.swift */,
+				CEC21EF12760E66E006092AF /* Froob.Action.swift */,
+				CEC21EEF2760E66E006092AF /* Froob.swift */,
 				CEF59ECE2752891300B40DFB /* Gradient.swift */,
 				CEF59EB92752857400B40DFB /* Image.swift */,
+				CEC21EF02760E66E006092AF /* Info.Policy.swift */,
+				CEC21EF22760E66E006092AF /* Info.swift */,
 				CEF59EDA27529B5500B40DFB /* Invalid.swift */,
 				CEA79E1127541F9900397B5E /* Launch.Item.swift */,
 				CEA8928B27527DE400D0603B /* Launch.swift */,
@@ -343,6 +358,9 @@
 			files = (
 				CEA8928C27527DE400D0603B /* Launch.swift in Sources */,
 				CE3F538F275E66A300FB1509 /* Export.Field.swift in Sources */,
+				CEC21EF32760E66E006092AF /* Froob.swift in Sources */,
+				CEC21EF62760E66E006092AF /* Info.swift in Sources */,
+				CEC21EEE2760E658006092AF /* About.swift in Sources */,
 				CEF59EC62752857400B40DFB /* Shape.swift in Sources */,
 				CEF59EC72752857400B40DFB /* Control.swift in Sources */,
 				CEFA387C2755367F00C05C3B /* CGRect.swift in Sources */,
@@ -359,6 +377,7 @@
 				CE1BE817275FA81100C3AE3D /* Menu.swift in Sources */,
 				CEFA38812755388B00C05C3B /* Window.Info.swift in Sources */,
 				CEF59ECC2752857400B40DFB /* Layer.swift in Sources */,
+				CEC21EF42760E66E006092AF /* Info.Policy.swift in Sources */,
 				CE8AB55B2760D478001C62A6 /* Transaction.swift in Sources */,
 				CEF59EC82752857400B40DFB /* Separator.swift in Sources */,
 				CEF59ECA2752857400B40DFB /* Vibrant.swift in Sources */,
@@ -387,6 +406,7 @@
 				CEFA38782755355100C05C3B /* CollectionCellState.swift in Sources */,
 				CEED0F95275791DF0076CFBC /* Subbar.swift in Sources */,
 				CE8AB55A2760D478001C62A6 /* Store.State.swift in Sources */,
+				CEC21EF52760E66E006092AF /* Froob.Action.swift in Sources */,
 				CE714C40275D1870007E6F3E /* Export.Item.swift in Sources */,
 				CE3F538D275E2CC600FB1509 /* NSEvent.swift in Sources */,
 				CE8AB55D2760D4F9001C62A6 /* Copy.swift in Sources */,

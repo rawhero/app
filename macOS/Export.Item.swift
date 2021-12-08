@@ -17,8 +17,6 @@ extension Export {
             self.url = picture.id
             exporter = .init(.init(size: picture.size))
             
-            let render = PassthroughSubject<Exporter, Never>()
-            
             super.init(frame: .zero)
             translatesAutoresizingMaskIntoConstraints = false
             wantsLayer = true
@@ -172,7 +170,7 @@ extension Export {
                     .store(in: &subs)
             }
             
-            render
+            exporter
                 .debounce(for: .milliseconds(750), scheduler: Camera.Pub.queues.randomElement()!)
                 .sink {
                     let result = CGImage.generate(url: picture.id, exporter: $0)
@@ -197,7 +195,6 @@ extension Export {
                     quality.stringValue = exporter.quality.formatted(.percent)
                     mode.selectedSegment = exporter.mode.rawValue
                     size.stringValue = "..."
-                    render.send(exporter)
                 }
                 .store(in: &subs)
         }

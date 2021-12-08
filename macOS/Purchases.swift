@@ -6,7 +6,7 @@ final class Purchases: NSWindow {
     private var subs = Set<AnyCancellable>()
     
     init() {
-        super.init(contentRect: .init(x: 0, y: 0, width: 520, height: 780),
+        super.init(contentRect: .init(x: 0, y: 0, width: 420, height: 440),
                    styleMask: [.closable, .titled, .fullSizeContentView], backing: .buffered, defer: true)
         animationBehavior = .alertPanel
         toolbar = .init()
@@ -24,7 +24,7 @@ final class Purchases: NSWindow {
         content.addSubview(image)
         
         let title = Text(vibrancy: true)
-        title.stringValue = "Support"
+        title.stringValue = "Support Raw"
         title.font = NSFont.systemFont(ofSize: NSFont.preferredFont(forTextStyle: .title1).pointSize, weight: .regular)
         title.textColor = .labelColor
         content.addSubview(title)
@@ -45,7 +45,7 @@ final class Purchases: NSWindow {
                         
                         let image = Image(icon: "hourglass")
                         image.symbolConfiguration = .init(textStyle: .largeTitle)
-                            .applying(.init(hierarchicalColor: .systemCyan))
+                            .applying(.init(hierarchicalColor: .systemPink))
                         inner!.addSubview(image)
                         
                         image.centerXAnchor.constraint(equalTo: inner!.centerXAnchor).isActive = true
@@ -76,15 +76,15 @@ final class Purchases: NSWindow {
                 inner!.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10).isActive = true
                 inner!.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
                 inner!.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
-                inner!.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -30).isActive = true
+                inner!.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -40).isActive = true
             }
             .store(in: &subs)
         
-        image.topAnchor.constraint(equalTo: content.topAnchor, constant: 100).isActive = true
+        image.topAnchor.constraint(equalTo: content.topAnchor, constant: 50).isActive = true
         image.centerXAnchor.constraint(equalTo: content.centerXAnchor).isActive = true
         
-        title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 80).isActive = true
-        title.centerXAnchor.constraint(equalTo: content.centerXAnchor, constant: -22).isActive = true
+        title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10).isActive = true
+        title.centerXAnchor.constraint(equalTo: content.centerXAnchor).isActive = true
         
         Task {
             await store.load()

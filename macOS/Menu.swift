@@ -84,13 +84,13 @@ final class Menu: NSMenu, NSMenuDelegate {
                 
                 switch item {
                 case let window as Window:
-                    title = window.url.lastPathComponent
+                    title = "Raw: " + window.url.lastPathComponent
                 case is Purchases:
                     title = "In-App Purchases"
-//                case is About:
-//                    title = "About"
-//                case is Info.Policy:
-//                    title = "Privacy policy"
+                case is About:
+                    title = "About"
+                case is Info.Policy:
+                    title = "Privacy policy"
                 default:
                     add = nil
                 }
@@ -131,7 +131,7 @@ final class Menu: NSMenu, NSMenuDelegate {
     }
     
     @objc private func triggerPolicy() {
-//        (NSApp.anyWindow() ?? Info.Policy())
-//            .makeKeyAndOrderFront(nil)
+        (NSApp.anyWindow() ?? Info.Policy())
+            .makeKeyAndOrderFront(nil)
     }
 }

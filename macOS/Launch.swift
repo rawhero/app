@@ -40,6 +40,17 @@ final class Launch: NSWindow {
         title.textColor = .tertiaryLabelColor
         content.addSubview(title)
         
+        let clear = Plain(title: "Clear")
+        content.addSubview(clear)
+        clear
+            .click
+            .sink {
+                Task {
+                    await cloud.clear()
+                }
+            }
+            .store(in: &subs)
+        
         let separator = Separator(mode: .horizontal)
         content.addSubview(separator)
         
@@ -68,6 +79,9 @@ final class Launch: NSWindow {
         title.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 14).isActive = true
         title.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor, constant: 5).isActive = true
         
+        clear.bottomAnchor.constraint(equalTo: separator.topAnchor).isActive = true
+        clear.rightAnchor.constraint(equalTo: content.safeAreaLayoutGuide.rightAnchor, constant: -15).isActive = true
+        
         separator.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 15).isActive = true
         separator.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 1).isActive = true
         separator.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -1).isActive = true
@@ -91,6 +105,7 @@ final class Launch: NSWindow {
             .removeDuplicates()
             .sink { [weak self] in
                 guard let self = self else { return }
+                clear.state = $0.isEmpty ? .off : .on
                 stack.setViews( $0.map { self.item(bookmark: $0) }, in: .top)
             }
             .store(in: &subs)

@@ -52,8 +52,8 @@ import Core
     }
     
     @objc override func orderFrontStandardAboutPanel(_ sender: Any?) {
-//        (anyWindow() ?? About())
-//            .makeKeyAndOrderFront(nil)
+        (anyWindow() ?? About())
+            .makeKeyAndOrderFront(nil)
     }
     
     private func launching() {
