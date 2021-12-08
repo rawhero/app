@@ -1,0 +1,38 @@
+{
+  "identifier" : "095322EA",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "5.99",
+      "familyShareable" : false,
+      "internalID" : "B005B919",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Support the development of Raw",
+          "displayName" : "Support Raw",
+          "locale" : "en_GB"
+        }
+      ],
+      "productID" : "rawhero.support",
+      "referenceName" : "Support",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 1
+  }
+}

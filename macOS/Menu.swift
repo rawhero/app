@@ -9,6 +9,15 @@ final class Menu: NSMenu, NSMenuDelegate {
         items = [app, file, edit, view, window, help]
     }
     
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        switch menu.title {
+        case "Window":
+            menu.items = windowItems
+        default:
+            break
+        }
+    }
+    
     private var app: NSMenuItem {
         .parent("Raw", [
             .child("About", #selector(NSApplication.orderFrontStandardAboutPanel(_:))),
@@ -76,12 +85,10 @@ final class Menu: NSMenu, NSMenuDelegate {
                 switch item {
                 case let window as Window:
                     title = window.url.lastPathComponent
-//                case is Purchases:
-//                    title = "In-App Purchases"
+                case is Purchases:
+                    title = "In-App Purchases"
 //                case is About:
 //                    title = "About"
-//                case is Info.Terms:
-//                    title = "Terms"
 //                case is Info.Policy:
 //                    title = "Privacy policy"
                 default:
@@ -105,9 +112,6 @@ final class Menu: NSMenu, NSMenuDelegate {
             .child("Privacy policy", #selector(triggerPolicy)) {
                 $0.target = self
             },
-            .child("Terms and conditions", #selector(triggerTerms)) {
-                $0.target = self
-            },
             .separator(),
             .child("Rate on the App Store", #selector(triggerRate)) {
                 $0.target = self
@@ -115,15 +119,6 @@ final class Menu: NSMenu, NSMenuDelegate {
             .child("Visit website", #selector(triggerWebsite)) {
                 $0.target = self
             }])
-    }
-    
-    func menuNeedsUpdate(_ menu: NSMenu) {
-        switch menu.title {
-        case "Window":
-            menu.items = windowItems
-        default:
-            break
-        }
     }
     
     @objc private func triggerRate() {
@@ -137,11 +132,6 @@ final class Menu: NSMenu, NSMenuDelegate {
     
     @objc private func triggerPolicy() {
 //        (NSApp.anyWindow() ?? Info.Policy())
-//            .makeKeyAndOrderFront(nil)
-    }
-    
-    @objc private func triggerTerms() {
-//        (NSApp.anyWindow() ?? Info.Terms())
 //            .makeKeyAndOrderFront(nil)
     }
 }

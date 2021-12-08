@@ -38,8 +38,8 @@ extension NSApplication {
     }
     
     @objc func showPurchases(_ sender: Any?) {
-//        (anyWindow() ?? Preferences())
-//            .makeKeyAndOrderFront(nil)
+        (anyWindow() ?? Purchases())
+            .makeKeyAndOrderFront(nil)
     }
     
     func window(id: String) -> Window? {
