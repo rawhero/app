@@ -392,23 +392,23 @@ private extension Set where Element == CollectionItem<Window.Info> {
         
         switch with {
         case .up:
-            rect = .init(x: current.midX, y: current.minY - (Window.Grid.Cell.spacing + 1),
-                         width: 1, height: 1)
+            rect = .init(x: current.midX, y: current.minY - (Window.Grid.Cell.spacing + 2),
+                         width: 2, height: 2)
         case .down:
-            rect = .init(x: current.midX, y: current.maxY + Window.Grid.Cell.spacing + 1,
-                         width: 1, height: 1)
+            rect = .init(x: current.midX, y: current.maxY + Window.Grid.Cell.spacing + 2,
+                         width: 2, height: 2)
         case .left:
-            rect = .init(x: current.minX - (Window.Grid.Cell.spacing + 1), y: current.minY,
-                         width: 1, height: Window.Grid.Cell.spacing + 1)
+            rect = .init(x: current.minX - (Window.Grid.Cell.spacing + 2), y: current.minY,
+                         width: 2, height: Window.Grid.Cell.spacing + 2)
         case .right:
-            rect = .init(x: current.maxX + Window.Grid.Cell.spacing + 1, y: current.minY,
-                         width: 1, height: Window.Grid.Cell.spacing + 1)
+            rect = .init(x: current.maxX + Window.Grid.Cell.spacing + 2, y: current.minY,
+                         width: 2, height: Window.Grid.Cell.spacing + 2)
         }
         
         return filter {
             $0
                 .rect
-                .contains(rect)
+                .intersects(rect)
         }
         .sorted {
             $0.rect.minY < $1.rect.minY
