@@ -199,15 +199,15 @@ final class Window: NSWindow, NSWindowDelegate {
                         .filter {
                             !items.contains($0)
                         }
-                    
-                    items
-                        .forEach {
-                            try? FileManager.default.trashItem(at: $0.id, resultingItemURL: nil)
-                        }
-                    
-                    Task {
-                        await UNUserNotificationCenter.send(message: items.count == 1 ? "Delete photo!" : "Deleted photos!")
-                    }
+//                    
+//                    items
+//                        .forEach {
+//                            try? FileManager.default.trashItem(at: $0.id, resultingItemURL: nil)
+//                        }
+//                    
+//                    Task {
+//                        await UNUserNotificationCenter.send(message: items.count == 1 ? "Delete photo!" : "Deleted photos!")
+//                    }
                 }
             }
             .store(in: &subs)

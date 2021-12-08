@@ -10,7 +10,6 @@ extension Window.Detail {
         var info: Window.Info? {
             didSet {
                 guard let info = info else { return }
-                image.contents = nil
                 sub = info
                     .hd
                     .sink { [weak self] in
@@ -23,6 +22,7 @@ extension Window.Detail {
                                 transition.duration = 0.5
                                 self?.image.add(transition, forKey: "transition")
                             }
+                            self?.image.contentsGravity = .resizeAspect
                             self?.image.contents = image
                         case .error:
                             self?.image.contents = NSImage(

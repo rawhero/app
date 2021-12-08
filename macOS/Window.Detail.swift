@@ -48,13 +48,24 @@ extension Window {
                 .removeDuplicates()
                 .sink { [weak self] in
                     self?.controller.arrangedObjects = $0.isEmpty ? [""] : $0
-                    
-                    if let first = selected.value.first,
-                       let index = $0.firstIndex(where: { $0.id == first.id.absoluteString }) {
-                        self?.controller.selectedIndex = index
-                    } else if let first = $0.first {
-                        self?.controller.selectedIndex = 0
-                        selected.send([first.picture])
+                }
+                .store(in: &subs)
+            
+            selected
+                .compactMap {
+                    $0
+                        .first
+                        .flatMap { first in
+                            info
+                                .value
+                                .firstIndex { $0.picture.id == first.id }
+                        }
+                }
+                .sink { [weak self] in
+                    if $0 == self?.controller.selectedIndex {
+                        self?.controller.animator().selectedIndex = $0
+                    } else {
+                        self?.controller.selectedIndex = $0
                     }
                 }
                 .store(in: &subs)
