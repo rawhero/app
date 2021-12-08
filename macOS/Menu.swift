@@ -127,7 +127,7 @@ final class Menu: NSMenu, NSMenuDelegate {
     }
     
     @objc private func triggerWebsite() {
-        NSWorkspace.shared.open(URL(string: "https://beetlepot.github.io/about")!)
+        NSWorkspace.shared.open(URL(string: "https://rawhero.github.io/about")!)
     }
     
     @objc private func triggerPolicy() {
