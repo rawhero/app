@@ -178,17 +178,18 @@ final class Window: NSWindow, NSWindowDelegate {
                 cancel.keyEquivalent = "\u{1b}"
                 if alert.runModal().rawValue == delete.tag {
                     
-                    if let current = selected.value.first,
-                       zoom.value == .detail,
-                       info.value.count > 1,
-                       let index = info
+                    if info.value.count > items.count,
+                       let index = selected
                         .value
-                        .firstIndex(where: {
-                            $0.picture.id == current.id
-                        }) {
+                        .compactMap({ selected in
+                            info
+                                .value
+                                .firstIndex(where: {
+                                    $0.picture.id == selected.id
+                                })
+                        }).max() {
                         
                         selected.send([info.value[index + (index < info.value.count - 1 ? 1 : -1)].picture])
-                        
                     } else {
                         selected.send([])
                     }
