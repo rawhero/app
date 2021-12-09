@@ -74,6 +74,17 @@ final class Window: NSWindow, NSWindowDelegate {
         separator.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
         separator.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
         
+        let presenting = { (view: NSView) in
+            self.present = view
+            
+            content.addSubview(view)
+            
+            view.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
+            view.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
+            view.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+            view.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
+        }
+        
         sorted
             .sink { pictures in
                 Task {
@@ -90,7 +101,6 @@ final class Window: NSWindow, NSWindowDelegate {
             .store(in: &subs)
         
         pictures
-            .removeDuplicates()
             .combineLatest(sort)
             .map { pictures, sort in
                 switch sort {
@@ -123,7 +133,7 @@ final class Window: NSWindow, NSWindowDelegate {
                 let view: NSView
                 
                 if empty {
-                    view = Empty()
+                    view = Empty(info: info)
                     self?.present?.removeFromSuperview()
                 } else {
                     switch new {
@@ -153,14 +163,7 @@ final class Window: NSWindow, NSWindowDelegate {
                     }
                 }
                 
-                self?.present = view
-                
-                content.addSubview(view)
-                
-                view.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
-                view.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
-                view.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
-                view.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
+                presenting(view)
             }
             .store(in: &subs)
         
@@ -222,7 +225,6 @@ final class Window: NSWindow, NSWindowDelegate {
         
         reload
             .sink {
-                selected.send([info.value.first!.picture])
                 pictures.send(FileManager.default.pictures(at: url))
                 
                 Task {
