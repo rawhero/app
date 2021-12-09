@@ -199,8 +199,9 @@ final class Window: NSWindow, NSWindowDelegate {
                                     $0.picture.id == selected.id
                                 })
                         }).max() {
-                        
-                        selected.send([info.value[index + (index < info.value.count - 1 ? 1 : -1)].picture])
+                        let remain = info.value.count - (items.count + 1)
+                        let index = index < remain ? index + 1 : remain
+                        selected.send([info.value[index].picture])
                     } else {
                         selected.send([])
                     }
@@ -210,15 +211,15 @@ final class Window: NSWindow, NSWindowDelegate {
                         .filter {
                             !items.contains($0)
                         }
-//                    
-//                    items
-//                        .forEach {
-//                            try? FileManager.default.trashItem(at: $0.id, resultingItemURL: nil)
-//                        }
-//                    
-//                    Task {
-//                        await UNUserNotificationCenter.send(message: items.count == 1 ? "Delete photo!" : "Deleted photos!")
-//                    }
+                    
+                    items
+                        .forEach {
+                            try? FileManager.default.trashItem(at: $0.id, resultingItemURL: nil)
+                        }
+                    
+                    Task {
+                        await UNUserNotificationCenter.send(message: items.count == 1 ? "Delete photo!" : "Deleted photos!")
+                    }
                 }
             }
             .store(in: &subs)
