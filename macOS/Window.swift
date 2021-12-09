@@ -42,6 +42,7 @@ final class Window: NSWindow, NSWindowDelegate {
         let trash = PassthroughSubject<[Core.Picture], Never>()
         let share = PassthroughSubject<[Core.Picture], Never>()
         let reload = PassthroughSubject<Void, Never>()
+        let loading = PassthroughSubject<Bool, Never>()
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -73,17 +74,6 @@ final class Window: NSWindow, NSWindowDelegate {
         separator.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor).isActive = true
         separator.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
         separator.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
-        
-        let presenting = { (view: NSView) in
-            self.present = view
-            
-            content.addSubview(view)
-            
-            view.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
-            view.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
-            view.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
-            view.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
-        }
         
         sorted
             .sink { pictures in
@@ -128,12 +118,16 @@ final class Window: NSWindow, NSWindowDelegate {
             .removeDuplicates()
             .combineLatest(info
                             .map { $0.isEmpty }
-                            .removeDuplicates())
-            .sink { [weak self] new, empty in
+                            .removeDuplicates(),
+                           loading)
+            .sink { [weak self] new, empty, loading in
                 let view: NSView
                 
-                if empty {
-                    view = Empty(info: info)
+                if loading {
+                    view = Empty(string: "Loading...")
+                    self?.present?.removeFromSuperview()
+                } else if empty {
+                    view = Empty(string: "No photos found")
                     self?.present?.removeFromSuperview()
                 } else {
                     switch new {
@@ -155,15 +149,24 @@ final class Window: NSWindow, NSWindowDelegate {
                             trash: trash,
                             share: share)
                         
-                        if self?.present != nil {
+                        if self?.present is Grid {
                             self?.present = view
                             view.isHidden = true
                             animateOut.send()
+                        } else {
+                            self?.present?.removeFromSuperview()
                         }
                     }
                 }
                 
-                presenting(view)
+                self?.present = view
+                
+                content.addSubview(view)
+                
+                view.topAnchor.constraint(equalTo: separator.bottomAnchor).isActive = true
+                view.bottomAnchor.constraint(equalTo: content.safeAreaLayoutGuide.bottomAnchor).isActive = true
+                view.leftAnchor.constraint(equalTo: content.leftAnchor).isActive = true
+                view.rightAnchor.constraint(equalTo: content.rightAnchor).isActive = true
             }
             .store(in: &subs)
         
@@ -225,17 +228,30 @@ final class Window: NSWindow, NSWindowDelegate {
         
         reload
             .sink {
-                pictures.send(FileManager.default.pictures(at: url))
+                loading.send(true)
                 
+                Task
+                    .detached(priority: .utility) {
+                        pictures.send(FileManager.default.pictures(at: url))
+                        
+                        DispatchQueue.main.async {
+                            loading.send(false)
+                        }
+                    }
                 Task {
                     await UNUserNotificationCenter.send(message: "Refreshed folder!")
                 }
             }
             .store(in: &subs)
         
+        loading.send(true)
         Task
             .detached(priority: .utility) {
                 pictures.send(FileManager.default.pictures(at: url))
+                
+                DispatchQueue.main.async {
+                    loading.send(false)
+                }
             }
     }
     
