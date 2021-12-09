@@ -11,6 +11,8 @@ final class Menu: NSMenu, NSMenuDelegate {
     
     func menuNeedsUpdate(_ menu: NSMenu) {
         switch menu.title {
+        case "File":
+            menu.items = fileItems
         case "Window":
             menu.items = windowItems
         default:
@@ -34,10 +36,22 @@ final class Menu: NSMenu, NSMenuDelegate {
     }
     
     private var file: NSMenuItem {
-        .parent("File", [
+        .parent("File", fileItems) {
+            $0.submenu!.autoenablesItems = false
+            $0.submenu!.delegate = self
+        }
+    }
+    
+    private var fileItems: [NSMenuItem] {
+        [
             .child("Open Folder", #selector(NSApp.launch), "n"),
             .separator(),
-            .child("Open...", #selector(NSApp.showLaunch), "N")])
+            .child("Open...", #selector(NSApp.showLaunch), "N"),
+            .separator(),
+            .child("Delete selected", #selector(Window.deleteSelected), .init(Unicode.Scalar(NSBackspaceCharacter)!)) {
+                $0.keyEquivalentModifierMask = []
+                $0.isEnabled = (NSApp.keyWindow as? Window)?.selected.value.isEmpty == false
+            }]
     }
     
     private var edit: NSMenuItem {

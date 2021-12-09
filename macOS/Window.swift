@@ -6,9 +6,11 @@ import Core
 final class Window: NSWindow, NSWindowDelegate {
     let url: URL
     let bookmark: Bookmark
+    private(set) weak var selected: CurrentValueSubject<[Core.Picture], Never>!
+    private weak var trash: PassthroughSubject<[Core.Picture], Never>!
     private weak var present: NSView?
     private var subs = Set<AnyCancellable>()
-    
+
     init(bookmark: Bookmark, url: URL) {
         self.bookmark = bookmark
         self.url = url
@@ -43,6 +45,9 @@ final class Window: NSWindow, NSWindowDelegate {
         let share = PassthroughSubject<[Core.Picture], Never>()
         let reload = PassthroughSubject<Void, Never>()
         let loading = PassthroughSubject<Bool, Never>()
+        
+        self.selected = selected
+        self.trash = trash
         
         let content = NSVisualEffectView()
         content.state = .active
@@ -245,6 +250,7 @@ final class Window: NSWindow, NSWindowDelegate {
             .store(in: &subs)
         
         loading.send(true)
+        
         Task
             .detached(priority: .utility) {
                 pictures.send(FileManager.default.pictures(at: url))
@@ -326,5 +332,9 @@ final class Window: NSWindow, NSWindowDelegate {
             .forEach {
                 $0.material = .menu
             }
+    }
+    
+    @objc func deleteSelected() {
+        trash.send(selected.value)
     }
 }
