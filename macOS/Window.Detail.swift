@@ -4,7 +4,7 @@ import Core
 
 extension Window {
     final class Detail: NSView, NSPageControllerDelegate, NSMenuDelegate {
-        let controller = NSPageController()
+        var controller: NSPageController?
         private weak var selected: CurrentValueSubject<[Core.Picture], Never>!
         private weak var zoom: CurrentValueSubject<Zoom, Never>!
         private weak var trash: PassthroughSubject<[Core.Picture], Never>!
@@ -28,16 +28,6 @@ extension Window {
             menu!.delegate = self
             
             translatesAutoresizingMaskIntoConstraints = false
-            controller.delegate = self
-            controller.transitionStyle = .horizontalStrip
-            controller.view = .init(frame: .zero)
-            controller.view.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(controller.view)
-            
-            controller.view.topAnchor.constraint(equalTo: topAnchor).isActive = true
-            controller.view.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-            controller.view.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-            controller.view.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
             
             if selected.value.isEmpty,
                let first = info.value.first {
@@ -45,9 +35,25 @@ extension Window {
             }
             
             info
-                .removeDuplicates()
                 .sink { [weak self] in
-                    self?.controller.arrangedObjects = $0.isEmpty ? [""] : $0
+                    guard let self = self else { return }
+                    self.controller?.view.removeFromSuperview()
+                    self.controller = .init()
+                    self.controller!.arrangedObjects = $0.isEmpty ? [""] : $0
+                    
+                    self.controller!.delegate = self
+                    self.controller!.transitionStyle = .horizontalStrip
+                    self.controller!.view = .init(frame: .zero)
+                    self.controller!.view.translatesAutoresizingMaskIntoConstraints = false
+                    
+                    self.addSubview(self.controller!.view)
+                    
+                    self.controller!.view.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+                    self.controller!.view.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+                    self.controller!.view.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+                    self.controller!.view.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+                    
+                    selected.send(selected.value)
                 }
                 .store(in: &subs)
             
@@ -62,11 +68,7 @@ extension Window {
                         }
                 }
                 .sink { [weak self] in
-                    if $0 == self?.controller.selectedIndex {
-                        self?.controller.animator().selectedIndex = $0
-                    } else {
-                        self?.controller.selectedIndex = $0
-                    }
+                    self?.controller?.selectedIndex = $0
                 }
                 .store(in: &subs)
         }
@@ -84,6 +86,7 @@ extension Window {
             let controller = NSViewController()
             controller.view = viewControllerForIdentifier.isEmpty ? NSView() : Cell()
             controller.view.autoresizingMask = [.width, .height]
+            controller.representedObject = viewControllerForIdentifier
             return controller
         }
         
@@ -97,7 +100,8 @@ extension Window {
         }
         
         func pageController(_: NSPageController, didTransitionTo: Any) {
-            if let info = didTransitionTo as? Info {
+            if let info = didTransitionTo as? Info,
+               selected.value != [info.picture] {
                 selected.send([info.picture])
             }
         }
@@ -130,7 +134,7 @@ extension Window {
         
         override var frame: NSRect {
             didSet {
-                controller
+                controller?
                     .view
                     .subviews
                     .forEach {

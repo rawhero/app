@@ -222,7 +222,7 @@ final class Window: NSWindow, NSWindowDelegate {
         
         reload
             .sink {
-                selected.send([])
+                selected.send([info.value.first!.picture])
                 pictures.send(FileManager.default.pictures(at: url))
                 
                 Task {
@@ -246,9 +246,9 @@ final class Window: NSWindow, NSWindowDelegate {
         case let detail as Detail:
             switch with.keyCode {
             case 123:
-                detail.controller.navigateBack(nil)
+                detail.controller?.navigateBack(nil)
             case 124:
-                detail.controller.navigateForward(nil)
+                detail.controller?.navigateForward(nil)
             default:
                 super.keyDown(with: with)
             }
